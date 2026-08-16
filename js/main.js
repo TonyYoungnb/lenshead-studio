@@ -42,7 +42,9 @@ const I18N = {
     "contact_studio_val": "日本东京都", "contact_hours_val": "周一至周五 10:00–19:00",
     "contact_cta": "发送邮件",
     "form_name": "姓名", "form_email": "邮箱", "form_subject": "主题",
-    "form_message": "留言", "form_submit": "发送邮件",     "form_note": "点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。",
+    "form_message": "留言", "form_submit": "发送邮件",
+    "form_note": "提交后我们会通过邮件尽快与你联系。",
+    "form_sending": "发送中…", "form_success": "已收到，我们会尽快回复你！", "form_error": "发送失败，请稍后重试，或直接邮件联系 TonyYoungnb@gmail.com。",
     "social_ins": "INS", "social_tiktok": "TIKTOK", "social_xhs": "小红书", "social_douyin": "抖音", "social_youtube": "油管", "social_bilibili": "B站",
     "footer_tagline": "镜头之下，光影之间",
     "footer_copyright": "© 2026 Lenshead Studio. 保留所有权利。"
@@ -86,7 +88,9 @@ const I18N = {
     "contact_studio_val": "東京都、日本", "contact_hours_val": "月〜金 10:00–19:00",
     "contact_cta": "メールする",
     "form_name": "お名前", "form_email": "メール", "form_subject": "件名",
-    "form_message": "メッセージ", "form_submit": "メールする",     "form_note": "クリックするとメールソフトが開き、内容が自動入力されます。確認して送信してください。",
+    "form_message": "メッセージ", "form_submit": "メールする",
+    "form_note": "送信後、メールにて速やかにご連絡いたします。",
+    "form_sending": "送信中…", "form_success": "受け付けました。追ってご返信いたします！", "form_error": "送信に失敗しました。しばらくしてから再度お試しいただくか、TonyYoungnb@gmail.com へ直接メールしてください。",
     "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "レンズの下、光と影の間で",
     "footer_copyright": "© 2026 Lenshead Studio. 全著作権所有。"
@@ -130,7 +134,9 @@ const I18N = {
     "contact_studio_val": "Tokyo, Japan", "contact_hours_val": "Mon–Fri 10:00–19:00",
     "contact_cta": "Email Us",
     "form_name": "Name", "form_email": "Email", "form_subject": "Subject",
-    "form_message": "Message", "form_submit": "Send Email",     "form_note": "Clicking opens your email client with the message pre-filled — review and send.",
+    "form_message": "Message", "form_submit": "Send Email",
+    "form_note": "After submitting, we'll get back to you by email as soon as possible.",
+    "form_sending": "Sending…", "form_success": "Received — we'll reply shortly!", "form_error": "Sending failed. Please retry, or email TonyYoungnb@gmail.com directly.",
     "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "Beneath the Lens, Between Light & Shadow",
     "footer_copyright": "© 2026 Lenshead Studio. All rights reserved."
@@ -205,34 +211,55 @@ if ("IntersectionObserver" in window) {
 
 /* ---------- contact form → email (pluggable) ----------
    The form builds a payload and hands it to sendInquiry().
-   Default: opens the visitor's mail client (mailto).
-   To wire a real email service (Formspree / EmailJS / your own
-   API), replace the body of sendInquiry() — the form and
-   validation above stay untouched.
+   Delivery method is controlled by FORMSPREE_ENDPOINT below:
+     • If set   → POSTs to Formspree, which forwards to your inbox.
+     • If empty → falls back to opening the visitor's mail client.
+   To switch providers (EmailJS / your own API), edit sendInquiry().
 --------------------------------------------------------- */
+const FORMSPREE_ENDPOINT = ""; // ← 填入你的 Formspree 端点，例如 "https://formspree.io/f/abcdwxyz"
+const INQUIRY_TO = "TonyYoungnb@gmail.com";
+
+function currentLang() {
+  try { return localStorage.getItem("lenshead_lang") || "zh"; } catch (e) { return "zh"; }
+}
+function t(key) {
+  const d = (typeof I18N !== "undefined" && I18N[currentLang()]) ? I18N[currentLang()] : null;
+  return (d && d[key]) || key;
+}
+
 function sendInquiry(payload) {
-  // === INTEGRATION PORT =====================================
-  // Example — Formspree:
-  //   fetch("https://formspree.io/f/XXXXXX", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(payload)
-  //   });
-  //   return;
-  // =========================================================
-  const TO = "TonyYoungnb@gmail.com";
+  if (FORMSPREE_ENDPOINT) {
+    return fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        name: payload.name,
+        email: payload.email,
+        subject: payload.subject || "Lenshead 合作咨询",
+        message: payload.message,
+        _subject: "Lenshead 新咨询 · " + payload.name + (payload.subject ? "（" + payload.subject + "）" : "")
+      })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+  // Fallback: open visitor's mail client
   const subj = encodeURIComponent(payload.subject || "Lenshead 合作咨询");
-  const body = encodeURIComponent(
-    "姓名：" + payload.name + "\n邮箱：" + payload.email + "\n\n" + payload.message
-  );
-  window.location.href = "mailto:" + TO + "?subject=" + subj + "&body=" + body;
+  const body = encodeURIComponent("姓名：" + payload.name + "\n邮箱：" + payload.email + "\n\n" + payload.message);
+  window.location.href = "mailto:" + INQUIRY_TO + "?subject=" + subj + "&body=" + body;
+  return Promise.resolve();
 }
 
 (function () {
   const form = document.getElementById("contactForm");
   if (!form) return;
+  const statusEl = document.getElementById("cf-status");
+  const btn = form.querySelector(".contact__submit");
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+    // Honeypot: real users leave this blank; bots usually fill it.
+    if (form.elements["company"] && form.elements["company"].value.trim()) return;
     const name = form.elements["name"].value.trim();
     const email = form.elements["email"].value.trim();
     const subject = form.elements["subject"].value.trim();
@@ -242,6 +269,16 @@ function sendInquiry(payload) {
       firstEmpty.focus();
       return;
     }
-    sendInquiry({ name: name, email: email, subject: subject, message: message });
+    if (statusEl) { statusEl.textContent = t("form_sending"); statusEl.className = "contact__status contact__status--pending"; }
+    if (btn) btn.disabled = true;
+    sendInquiry({ name: name, email: email, subject: subject, message: message })
+      .then(function () {
+        if (statusEl) { statusEl.textContent = t("form_success"); statusEl.className = "contact__status contact__status--ok"; }
+        form.reset();
+      })
+      .catch(function () {
+        if (statusEl) { statusEl.textContent = t("form_error"); statusEl.className = "contact__status contact__status--err"; }
+      })
+      .finally(function () { if (btn) btn.disabled = false; });
   });
 })();

@@ -235,6 +235,10 @@
         <span class="contact__meta-val" data-i18n="contact_hours_val">周一至周五 10:00–19:00</span>
       </div>
       <form class="contact__form reveal" id="contactForm" novalidate>
+        <div class="contact__hp" aria-hidden="true">
+          <label for="cf-company">公司</label>
+          <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off" />
+        </div>
         <div class="contact__row">
           <div class="contact__field">
             <label for="cf-name" data-i18n="form_name">姓名</label>
@@ -254,7 +258,8 @@
           <textarea id="cf-message" name="message" rows="5" required></textarea>
         </div>
         <button type="submit" class="btn btn--gold contact__submit" data-i18n="form_submit">发送邮件</button>
-        <span class="contact__note" data-i18n="form_note">点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。</span>
+        <span class="contact__note" data-i18n="form_note">提交后我们会通过邮件尽快与你联系。</span>
+        <p class="contact__status" id="cf-status" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
