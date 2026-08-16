@@ -42,7 +42,8 @@ const I18N = {
     "contact_studio_val": "日本东京都", "contact_hours_val": "周一至周五 10:00–19:00",
     "contact_cta": "发送邮件",
     "form_name": "姓名", "form_email": "邮箱", "form_subject": "主题",
-    "form_message": "留言", "form_submit": "发送邮件", "form_note": "点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。",
+    "form_message": "留言", "form_submit": "发送邮件",     "form_note": "点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。",
+    "social_ins": "INS", "social_tiktok": "TIKTOK", "social_xhs": "小红书", "social_douyin": "抖音", "social_youtube": "油管", "social_bilibili": "B站",
     "footer_tagline": "镜头之下，光影之间",
     "footer_copyright": "© 2026 Lenshead Studio. 保留所有权利。"
   },
@@ -85,7 +86,8 @@ const I18N = {
     "contact_studio_val": "東京都、日本", "contact_hours_val": "月〜金 10:00–19:00",
     "contact_cta": "メールする",
     "form_name": "お名前", "form_email": "メール", "form_subject": "件名",
-    "form_message": "メッセージ", "form_submit": "メールする", "form_note": "クリックするとメールソフトが開き、内容が自動入力されます。確認して送信してください。",
+    "form_message": "メッセージ", "form_submit": "メールする",     "form_note": "クリックするとメールソフトが開き、内容が自動入力されます。確認して送信してください。",
+    "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "レンズの下、光と影の間で",
     "footer_copyright": "© 2026 Lenshead Studio. 全著作権所有。"
   },
@@ -128,7 +130,8 @@ const I18N = {
     "contact_studio_val": "Tokyo, Japan", "contact_hours_val": "Mon–Fri 10:00–19:00",
     "contact_cta": "Email Us",
     "form_name": "Name", "form_email": "Email", "form_subject": "Subject",
-    "form_message": "Message", "form_submit": "Send Email", "form_note": "Clicking opens your email client with the message pre-filled — review and send.",
+    "form_message": "Message", "form_submit": "Send Email",     "form_note": "Clicking opens your email client with the message pre-filled — review and send.",
+    "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "Beneath the Lens, Between Light & Shadow",
     "footer_copyright": "© 2026 Lenshead Studio. All rights reserved."
   }
