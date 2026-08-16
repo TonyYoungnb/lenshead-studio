@@ -126,8 +126,7 @@ img { max-width: 100%; display: block; }
 /* ============================================================
    HERO  (real photo: images/hero-bg.jpg)
    - .hero__bg holds the photo so it can scale independently
-   - on hover: slow zoom (1.08) over 1.4s
-   - ambient: gentle 12s breath scale (1.00 → 1.04) always on
+   - ambient: gentle 12s breath scale (1.00 → 1.04) always on, no hover interruption
    ============================================================ */
 .hero {
   position: relative;
@@ -145,14 +144,12 @@ img { max-width: 100%; display: block; }
   animation: heroBreath 12s ease-in-out infinite;
   will-change: transform;
 }
-.hero:hover .hero__bg { animation: none; transform: scale(1.08); transition: transform 1.4s cubic-bezier(.2,.7,.2,1); }
 @keyframes heroBreath {
   0%, 100% { transform: scale(1.00); }
   50%      { transform: scale(1.04); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero__bg { animation: none; transform: none; }
-  .hero:hover .hero__bg { transform: none; }
 }
 .hero__overlay {
   position: absolute; inset: 0; z-index: 1;
@@ -193,6 +190,24 @@ img { max-width: 100%; display: block; }
   animation: scrollPulse 2.2s ease-in-out infinite;
 }
 @keyframes scrollPulse { 0%,100% { opacity: .3; transform: scaleY(.7);} 50% { opacity: 1; transform: scaleY(1);} }
+
+/* ---------- Hero social (INS / TikTok / 小红书 / 抖音) ---------- */
+.hero__social { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 42px; }
+.hero__social-link {
+  display: inline-flex; align-items: center;
+  padding: 11px 20px;
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: var(--sans); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  background: rgba(255,255,255,0.03);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: color .35s ease, border-color .35s ease, background .35s ease, transform .35s ease;
+}
+.hero__social-link:hover {
+  color: var(--accent); border-color: var(--accent);
+  background: rgba(201,168,106,0.10); transform: translateY(-2px);
+}
 
 /* ============================================================
    SECTIONS
@@ -271,12 +286,27 @@ img { max-width: 100%; display: block; }
 .contact { text-align: center; }
 .contact__head { margin-bottom: 50px; }
 .contact__head .section__desc { margin-left: auto; margin-right: auto; }
-.contact__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-bottom: 46px; }
+.contact__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-bottom: 56px; }
 .contact__item { padding: 26px 18px; border: 1px solid var(--line-soft); background: var(--surface); }
 .contact__label { display: block; font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
 .contact__item a, .contact__item span:not(.contact__label) { font-size: 16px; color: var(--text); }
 .contact__item a { transition: color .3s ease; }
 .contact__item a:hover { color: var(--accent); }
+
+/* ---------- Contact form (mailto) ---------- */
+.contact__form { max-width: 620px; margin: 0 auto; text-align: left; }
+.contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.contact__field { display: flex; flex-direction: column; margin-bottom: 18px; }
+.contact__field label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.contact__field input, .contact__field textarea {
+  background: var(--surface); border: 1px solid var(--line-soft); color: var(--text);
+  padding: 13px 15px; font-family: var(--sans); font-size: 15px; border-radius: 0; outline: none;
+  transition: border-color .3s ease;
+}
+.contact__field input:focus, .contact__field textarea:focus { border-color: var(--accent); }
+.contact__field textarea { resize: vertical; }
+.contact__form .btn { margin-top: 6px; }
+.contact__note { display:block; margin-top: 16px; font-size: 13px; color: var(--text-dim); }
 
 /* ============================================================
    FOOTER
@@ -323,6 +353,7 @@ img { max-width: 100%; display: block; }
   .lang { margin: 14px 0 0; }
   .lang__btn { font-size: 15px; }
   .grid--3, .contact__grid { grid-template-columns: 1fr; }
+  .contact__row { grid-template-columns: 1fr; }
   .hero__scroll { display: none; }
 }
 

@@ -41,6 +41,8 @@ const I18N = {
     "contact_studio_label": "工作室", "contact_hours_label": "营业时间",
     "contact_studio_val": "日本东京都", "contact_hours_val": "周一至周五 10:00–19:00",
     "contact_cta": "发送邮件",
+    "form_name": "姓名", "form_email": "邮箱", "form_subject": "主题",
+    "form_message": "留言", "form_submit": "发送邮件", "form_note": "点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。",
     "footer_tagline": "镜头之下，光影之间",
     "footer_copyright": "© 2026 Lenshead Studio. 保留所有权利。"
   },
@@ -82,6 +84,8 @@ const I18N = {
     "contact_studio_label": "スタジオ", "contact_hours_label": "営業時間",
     "contact_studio_val": "東京都、日本", "contact_hours_val": "月〜金 10:00–19:00",
     "contact_cta": "メールする",
+    "form_name": "お名前", "form_email": "メール", "form_subject": "件名",
+    "form_message": "メッセージ", "form_submit": "メールする", "form_note": "クリックするとメールソフトが開き、内容が自動入力されます。確認して送信してください。",
     "footer_tagline": "レンズの下、光と影の間で",
     "footer_copyright": "© 2026 Lenshead Studio. 全著作権所有。"
   },
@@ -123,6 +127,8 @@ const I18N = {
     "contact_studio_label": "Studio", "contact_hours_label": "Hours",
     "contact_studio_val": "Tokyo, Japan", "contact_hours_val": "Mon–Fri 10:00–19:00",
     "contact_cta": "Email Us",
+    "form_name": "Name", "form_email": "Email", "form_subject": "Subject",
+    "form_message": "Message", "form_submit": "Send Email", "form_note": "Clicking opens your email client with the message pre-filled — review and send.",
     "footer_tagline": "Beneath the Lens, Between Light & Shadow",
     "footer_copyright": "© 2026 Lenshead Studio. All rights reserved."
   }
@@ -193,3 +199,27 @@ if ("IntersectionObserver" in window) {
 } else {
   reveals.forEach(el => el.classList.add("is-visible"));
 }
+
+/* ---------- contact form → mailto ---------- */
+(function () {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+  const TO = "TonyYoungnb@gmail.com";
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const name = form.elements["name"].value.trim();
+    const email = form.elements["email"].value.trim();
+    const subject = form.elements["subject"].value.trim();
+    const message = form.elements["message"].value.trim();
+    if (!name || !email || !message) {
+      const firstEmpty = !name ? form.elements["name"] : !email ? form.elements["email"] : form.elements["message"];
+      firstEmpty.focus();
+      return;
+    }
+    const subj = encodeURIComponent(subject || "Lenshead 合作咨询");
+    const body = encodeURIComponent(
+      "姓名：" + name + "\n邮箱：" + email + "\n\n" + message
+    );
+    window.location.href = "mailto:" + TO + "?subject=" + subj + "&body=" + body;
+  });
+})();

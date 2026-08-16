@@ -45,6 +45,12 @@
       <h1 class="hero__title reveal" data-i18n="hero_title">镜头之下，光影之间</h1>
       <p class="hero__sub reveal" data-i18n="hero_subtitle">我们专注于商业摄影、人像艺术与时尚纪实，用镜头讲述属于您的独特故事。</p>
       <a href="#portfolio" class="btn btn--gold reveal" data-i18n="hero_cta">浏览作品</a>
+      <div class="hero__social reveal">
+        <a class="hero__social-link" href="https://www.instagram.com/" target="_blank" rel="noopener">INS</a>
+        <a class="hero__social-link" href="https://www.tiktok.com/" target="_blank" rel="noopener">TIKTOK</a>
+        <a class="hero__social-link" href="https://www.xiaohongshu.com/" target="_blank" rel="noopener">小红书</a>
+        <a class="hero__social-link" href="https://www.douyin.com/" target="_blank" rel="noopener">抖音</a>
+      </div>
     </div>
     <a href="#portfolio" class="hero__scroll reveal" data-i18n="hero_scroll">向下滚动</a>
   </section>
@@ -222,7 +228,28 @@
           <span data-i18n="contact_hours_val">周一至周五 10:00–19:00</span>
         </div>
       </div>
-      <a href="mailto:TonyYoungnb@gmail.com" class="btn btn--gold reveal" data-i18n="contact_cta">发送邮件</a>
+      <form class="contact__form reveal" id="contactForm" novalidate>
+        <div class="contact__row">
+          <div class="contact__field">
+            <label for="cf-name" data-i18n="form_name">姓名</label>
+            <input type="text" id="cf-name" name="name" autocomplete="name" required />
+          </div>
+          <div class="contact__field">
+            <label for="cf-email" data-i18n="form_email">邮箱</label>
+            <input type="email" id="cf-email" name="email" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="contact__field">
+          <label for="cf-subject" data-i18n="form_subject">主题</label>
+          <input type="text" id="cf-subject" name="subject" />
+        </div>
+        <div class="contact__field">
+          <label for="cf-message" data-i18n="form_message">留言</label>
+          <textarea id="cf-message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn--gold" data-i18n="form_submit">发送邮件</button>
+        <span class="contact__note" data-i18n="form_note">点击后将打开您的邮件客户端，内容已自动填好，确认即可发送。</span>
+      </form>
     </div>
   </section>
 
