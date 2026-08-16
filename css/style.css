@@ -169,7 +169,7 @@ img { max-width: 100%; display: block; }
    ============================================================ */
 .section { padding: clamp(80px, 12vh, 140px) 0; }
 .section--alt { background: var(--bg-alt); }
-#portfolio, #about, #services, #contact { scroll-margin-top: var(--nav-h); }
+#portfolio, #about, #founder, #services, #contact { scroll-margin-top: var(--nav-h); }
 
 .section__head { margin-bottom: 60px; }
 .section__head .section__desc { margin-bottom: 0; }
@@ -214,6 +214,16 @@ img { max-width: 100%; display: block; }
 .stat__num { display: block; font-family: var(--serif); font-size: clamp(44px, 7vw, 76px); font-weight: 600; color: var(--accent); line-height: 1; }
 .stat__label { display: block; margin-top: 14px; font-size: 13px; letter-spacing: 0.16em; color: var(--text-dim); text-transform: uppercase; }
 
+/* ---------- Founder / 主理人 (photo placeholder: images/about.jpg → 建议替换为 founder.jpg) ---------- */
+.founder { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 60px; align-items: center; }
+.founder__media { aspect-ratio: 4 / 5; }
+.founder__photo { width: 100%; height: 100%; background: url('../images/about.jpg') center / cover no-repeat; border: 1px solid var(--line); }
+.founder__role { color: var(--accent); font-size: 15px; letter-spacing: 0.14em; margin: 16px 0 24px; }
+.founder__bio { color: var(--text-dim); font-size: 16px; margin-bottom: 28px; }
+.founder__creds { list-style: none; border-top: 1px solid var(--line); }
+.founder__creds li { position: relative; padding: 16px 0 16px 30px; border-bottom: 1px solid var(--line-soft); color: var(--text-dim); font-size: 15px; line-height: 1.6; }
+.founder__creds li::before { content: ""; position: absolute; left: 2px; top: 22px; width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); }
+
 /* ---------- Services ---------- */
 .service { padding: 34px 30px; border-top: 1px solid var(--line); border-left: 1px solid var(--line-soft); transition: background .4s ease, border-color .4s ease; }
 .service:hover { background: var(--surface); border-top-color: var(--accent); }
@@ -256,6 +266,8 @@ img { max-width: 100%; display: block; }
   .grid--3 { grid-template-columns: repeat(2,1fr); }
   .about { grid-template-columns: 1fr; gap: 36px; }
   .about__media { max-width: 460px; }
+  .founder { grid-template-columns: 1fr; gap: 36px; }
+  .founder__media { max-width: 420px; }
   .contact__grid { grid-template-columns: repeat(2,1fr); }
   .stats { grid-template-columns: 1fr; gap: 36px; text-align: center; }
 }
