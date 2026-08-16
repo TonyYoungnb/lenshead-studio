@@ -1,985 +1,227 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenshead Studio | 镜头之下，光影之间</title>
-    <meta name="description" content="Lenshead摄影工作室 - 专业商业摄影、人像摄影、活动纪实">
-    
-    <!-- 字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* 🎨 品牌色彩 - 修改这里改变整站配色 */
-            --primary-color: #1a1a1a;        /* 主色调：深黑 */
-            --accent-color: #d4af37;         /* 强调色：金色 */
-            --text-light: #f5f5f5;           /* 浅色文字 */
-            --text-gray: #888;               /* 灰色文字 */
-            --bg-dark: #0f0f0f;              /* 背景色 */
-            
-            /* 📐 布局变量 */
-            --container-width: 1400px;
-            --section-padding: 120px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Noto Serif SC', serif;
-            font-weight: 700;
-        }
-
-        /* 导航栏 */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            transition: background 0.3s;
-        }
-
-        nav.scrolled {
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(10px);
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--text-light);
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: var(--accent-color);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--accent-color);
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* 移动端菜单按钮 */
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-        }
-
-        .menu-toggle span {
-            width: 25px;
-            height: 2px;
-            background: var(--text-light);
-            transition: 0.3s;
-        }
-
-        /* Hero 区域 */
-        .hero {
-            height: 100vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('images/hero-bg.jpg'); /* 🖼️ 更换首页背景图 */
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.4);
-            z-index: -1;
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 1;
-            padding: 0 20px;
-            max-width: 900px;
-        }
-
-        .hero-subtitle {
-            font-size: 14px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        .hero h1 {
-            font-size: clamp(40px, 8vw, 80px);
-            line-height: 1.1;
-            margin-bottom: 30px;
-            opacity: 0;
-            animation: fadeInUp 1s ease 0.2s forwards;
-        }
-
-        .hero-description {
-            font-size: 18px;
-            color: var(--text-gray);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            opacity: 0;
-            animation: fadeInUp 1s ease 0.4s forwards;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 15px 40px;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            text-decoration: none;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-            opacity: 0;
-            animation: fadeInUp 1s ease 0.6s forwards;
-        }
-
-        .cta-button:hover {
-            background: var(--accent-color);
-            color: var(--bg-dark);
-        }
-
-        /* 滚动提示 */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator::before {
-            content: '↓';
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-
-        /* 通用区域样式 */
-        section {
-            padding: var(--section-padding) 20px;
-        }
-
-        .container {
-            max-width: var(--container-width);
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-tag {
-            color: var(--accent-color);
-            letter-spacing: 3px;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-size: clamp(32px, 5vw, 48px);
-            margin-bottom: 20px;
-        }
-
-        .section-desc {
-            color: var(--text-gray);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* 作品集网格 */
-        .portfolio {
-            background: var(--primary-color);
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 4/3;
-            cursor: pointer;
-            group: gallery;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-
-        .gallery-item:hover .gallery-title {
-            transform: translateY(0);
-        }
-
-        .gallery-category {
-            color: var(--accent-color);
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transform: translateY(20px);
-            transition: transform 0.3s 0.1s;
-        }
-
-        .gallery-item:hover .gallery-category {
-            transform: translateY(0);
-        }
-
-        /* 关于我们 */
-        .about {
-            background: var(--bg-dark);
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .about-image {
-            position: relative;
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            filter: grayscale(100%);
-            transition: filter 0.5s;
-        }
-
-        .about-image:hover img {
-            filter: grayscale(0%);
-        }
-
-        .about-image::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 100%;
-            height: 100%;
-            border: 2px solid var(--accent-color);
-            z-index: -1;
-        }
-
-        .about-text h3 {
-            font-size: 36px;
-            margin-bottom: 30px;
-            color: var(--accent-color);
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            color: var(--text-gray);
-            line-height: 1.8;
-        }
-
-        .stats {
-            display: flex;
-            gap: 40px;
-            margin-top: 40px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .stat-item h4 {
-            font-size: 48px;
-            color: var(--accent-color);
-            font-family: 'Inter', sans-serif;
-            font-weight: 300;
-        }
-
-        .stat-item p {
-            font-size: 14px;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* 服务 */
-        .services {
-            background: linear-gradient(to bottom, var(--primary-color), var(--bg-dark));
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .service-card {
-            padding: 40px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--accent-color);
-            transform: translateY(100%);
-            transition: transform 0.3s;
-            z-index: -1;
-        }
-
-        .service-card:hover {
-            border-color: var(--accent-color);
-            color: var(--bg-dark);
-        }
-
-        .service-card:hover::before {
-            transform: translateY(0);
-        }
-
-        .service-icon {
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
-
-        .service-card h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .service-card p {
-            color: var(--text-gray);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .service-card:hover p {
-            color: rgba(0,0,0,0.7);
-        }
-
-        /* 联系 */
-        .contact {
-            background: var(--bg-dark);
-            position: relative;
-        }
-
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-        }
-
-        .contact-info h3 {
-            font-size: 36px;
-            margin-bottom: 40px;
-        }
-
-        .contact-item {
-            margin-bottom: 30px;
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-        }
-
-        .contact-item strong {
-            display: block;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 2px;
-        }
-
-        .contact-item p {
-            color: var(--text-gray);
-            font-size: 18px;
-        }
-
-        .contact-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-group {
-            position: relative;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 15px 0;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-light);
-            font-family: inherit;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-bottom-color: var(--accent-color);
-        }
-
-        .form-group label {
-            position: absolute;
-            left: 0;
-            top: 15px;
-            color: var(--text-gray);
-            transition: all 0.3s;
-            pointer-events: none;
-        }
-
-        .form-group input:focus + label,
-        .form-group input:not(:placeholder-shown) + label,
-        .form-group textarea:focus + label,
-        .form-group textarea:not(:placeholder-shown) + label {
-            top: -10px;
-            font-size: 12px;
-            color: var(--accent-color);
-        }
-
-        .submit-btn {
-            padding: 15px 40px;
-            background: var(--accent-color);
-            color: var(--bg-dark);
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: transform 0.3s;
-            margin-top: 20px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        /* 页脚 */
-        footer {
-            background: #000;
-            padding: 60px 20px 30px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .footer-content {
-            max-width: var(--container-width);
-            margin: 0 auto;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .social-links a {
-            color: var(--text-gray);
-            text-decoration: none;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .copyright {
-            color: var(--text-gray);
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        /* 动画 */
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: flex;
-            }
-
-            .about-content,
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .gallery {
-                grid-template-columns: 1fr;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            section {
-                padding: 60px 20px;
-            }
-        }
-
-        /* 图片懒加载占位 */
-        img {
-            background: linear-gradient(110deg, #1a1a1a 8%, #2a2a2a 18%, #1a1a1a 33%);
-            background-size: 200% 100%;
-            animation: shine 1.5s linear infinite;
-        }
-
-        img.loaded {
-            animation: none;
-            background: transparent;
-        }
-
-        @keyframes shine {
-            to {
-                background-position-x: -200%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenshead Studio｜镜头之下，光影之间</title>
+  <meta name="description" content="Lenshead 是一家专注于商业摄影、人像艺术与时尚纪实的视觉工作室。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body id="top">
 
-    <!-- 导航 -->
-    <nav id="navbar">
-        <a href="#" class="logo">LENS<span>HEAD</span></a>
-        <ul class="nav-links">
-            <li><a href="#home">首页</a></li>
-            <li><a href="#portfolio">作品</a></li>
-            <li><a href="#about">关于</a></li>
-            <li><a href="#services">服务</a></li>
-            <li><a href="#contact">联系</a></li>
-        </ul>
-        <div class="menu-toggle" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="#top" class="brand">LENSHEAD<span class="brand__dot">.</span></a>
+      <nav class="nav__links" id="navLinks">
+        <a href="#portfolio" data-i18n="nav_work">作品</a>
+        <a href="#about" data-i18n="nav_about">关于</a>
+        <a href="#services" data-i18n="nav_services">服务</a>
+        <a href="#contact" data-i18n="nav_contact">联系</a>
+        <div class="lang" role="group" aria-label="Language">
+          <button class="lang__btn is-active" data-lang="zh">中文</button>
+          <span class="lang__sep">/</span>
+          <button class="lang__btn" data-lang="ja">日本語</button>
+          <span class="lang__sep">/</span>
+          <button class="lang__btn" data-lang="en">EN</button>
         </div>
-    </nav>
+      </nav>
+      <button class="nav__toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
 
-    <!-- 首页 Hero -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <p class="hero-subtitle">Professional Photography Studio</p>
-            <h1>捕捉瞬间的<br>永恒之美</h1>
-            <p class="hero-description">
-                Lenshead 是一家专注于商业摄影、人像艺术与时尚纪实的视觉工作室，
-                我们用镜头讲述属于你的独特故事。
-            </p>
-            <a href="#portfolio" class="cta-button">浏览作品</a>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__inner container">
+      <p class="eyebrow reveal" data-i18n="hero_eyebrow">专业摄影工作室</p>
+      <h1 class="hero__title reveal" data-i18n="hero_title">镜头之下，光影之间</h1>
+      <p class="hero__sub reveal" data-i18n="hero_subtitle">我们专注于商业摄影、人像艺术与时尚纪实，用镜头讲述属于您的独特故事。</p>
+      <a href="#portfolio" class="btn btn--gold reveal" data-i18n="hero_cta">浏览作品</a>
+    </div>
+    <a href="#portfolio" class="hero__scroll reveal" data-i18n="hero_scroll">向下滚动</a>
+  </section>
+
+  <!-- ============ PORTFOLIO ============ -->
+  <section class="section" id="portfolio">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow" data-i18n="portfolio_eyebrow">作品集</p>
+        <h2 class="section__title" data-i18n="portfolio_title">精选作品</h2>
+        <p class="section__desc" data-i18n="portfolio_desc">每一张照片都是一次精心策划的视觉叙事。</p>
+      </div>
+      <div class="grid grid--3">
+        <a class="pf-card reveal cat-1" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat1_title">光影商业</h3>
+            <span class="pf-card__en" data-i18n="cat1_en">Commercial</span>
+          </div>
+        </a>
+        <a class="pf-card reveal cat-2" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat2_title">情绪人像</h3>
+            <span class="pf-card__en" data-i18n="cat2_en">Portrait</span>
+          </div>
+        </a>
+        <a class="pf-card reveal cat-3" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat3_title">时尚编辑</h3>
+            <span class="pf-card__en" data-i18n="cat3_en">Fashion</span>
+          </div>
+        </a>
+        <a class="pf-card reveal cat-4" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat4_title">瞬间纪实</h3>
+            <span class="pf-card__en" data-i18n="cat4_en">Event</span>
+          </div>
+        </a>
+        <a class="pf-card reveal cat-5" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat5_title">空间美学</h3>
+            <span class="pf-card__en" data-i18n="cat5_en">Architecture</span>
+          </div>
+        </a>
+        <a class="pf-card reveal cat-6" href="#contact">
+          <div class="pf-card__media"></div>
+          <div class="pf-card__body">
+            <h3 data-i18n="cat6_title">静物艺术</h3>
+            <span class="pf-card__en" data-i18n="cat6_en">Product</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="section section--alt" id="about">
+    <div class="container about">
+      <div class="about__text reveal">
+        <p class="eyebrow" data-i18n="about_eyebrow">关于</p>
+        <h2 class="section__title" data-i18n="about_title">关于 Lenshead</h2>
+        <p class="about__p" data-i18n="about_text">成立于 2018 年，Lenshead 摄影工作室致力于为客户提供高端定制化的影像服务。我们相信，优秀的摄影作品不仅是技术的展现，更是情感的传递。我们的团队由资深摄影师、灯光师与后期修图师组成，拥有丰富的商业拍摄经验——无论是品牌广告、企业形象，还是个人写真，我们都能为您打造独一无二的视觉语言。</p>
+      </div>
+      <div class="about__media reveal">
+        <div class="about__photo"></div>
+      </div>
+    </div>
+    <div class="container stats reveal">
+      <div class="stat">
+        <span class="stat__num">6+</span>
+        <span class="stat__label" data-i18n="stat1_label">年行业经验</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">500+</span>
+        <span class="stat__label" data-i18n="stat2_label">项目案例</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">50+</span>
+        <span class="stat__label" data-i18n="stat3_label">合作品牌</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow" data-i18n="services_eyebrow">服务</p>
+        <h2 class="section__title" data-i18n="services_title">我们的服务</h2>
+        <p class="section__desc" data-i18n="services_desc">提供全方位的专业摄影解决方案。</p>
+      </div>
+      <div class="grid grid--3 services">
+        <div class="service reveal">
+          <span class="service__num">01</span>
+          <h3 data-i18n="s1_title">商业摄影</h3>
+          <p data-i18n="s1_desc">品牌形象片、产品广告、企业宣传册拍摄，助力品牌视觉升级。</p>
         </div>
-        <div class="scroll-indicator"></div>
-    </section>
-
-    <!-- 作品集 -->
-    <section class="portfolio" id="portfolio">
-        <div class="container">
-            <div class="section-header">
-                <p class="section-tag">Portfolio</p>
-                <h2 class="section-title">精选作品</h2>
-                <p class="section-desc">每一张照片都是一次精心策划的视觉叙事</p>
-            </div>
-            
-            <div class="gallery">
-                <!-- 🖼️ 作品1：替换 images/portfolio-1.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-1.jpg" alt="商业摄影" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">光影商业</h3>
-                        <p class="gallery-category">Commercial</p>
-                    </div>
-                </div>
-
-                <!-- 🖼️ 作品2：替换 images/portfolio-2.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-2.jpg" alt="人像摄影" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">情绪人像</h3>
-                        <p class="gallery-category">Portrait</p>
-                    </div>
-                </div>
-
-                <!-- 🖼️ 作品3：替换 images/portfolio-3.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-3.jpg" alt="时尚摄影" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">时尚编辑</h3>
-                        <p class="gallery-category">Fashion</p>
-                    </div>
-                </div>
-
-                <!-- 🖼️ 作品4：替换 images/portfolio-4.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-4.jpg" alt="活动纪实" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">瞬间纪实</h3>
-                        <p class="gallery-category">Event</p>
-                    </div>
-                </div>
-
-                <!-- 🖼️ 作品5：替换 images/portfolio-5.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-5.jpg" alt="建筑摄影" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">空间美学</h3>
-                        <p class="gallery-category">Architecture</p>
-                    </div>
-                </div>
-
-                <!-- 🖼️ 作品6：替换 images/portfolio-6.jpg -->
-                <div class="gallery-item">
-                    <img src="images/portfolio-6.jpg" alt="产品摄影" loading="lazy">
-                    <div class="gallery-overlay">
-                        <h3 class="gallery-title">静物艺术</h3>
-                        <p class="gallery-category">Product</p>
-                    </div>
-                </div>
-            </div>
+        <div class="service reveal">
+          <span class="service__num">02</span>
+          <h3 data-i18n="s2_title">人像摄影</h3>
+          <p data-i18n="s2_desc">个人写真、职业形象照、艺人宣传照，展现最真实动人的你。</p>
         </div>
-    </section>
-
-    <!-- 关于我们 -->
-    <section class="about" id="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-image">
-                    <!-- 🖼️ 关于页面图片：替换 images/about.jpg -->
-                    <img src="images/about.jpg" alt="Lenshead Studio" loading="lazy">
-                </div>
-                <div class="about-text">
-                    <h3>关于 Lenshead</h3>
-                    <p>
-                        成立于2018年，Lenshead 摄影工作室致力于为客户提供高端定制化的影像服务。
-                        我们相信，优秀的摄影作品不仅仅是技术的展现，更是情感的传递。
-                    </p>
-                    <p>
-                        我们的团队由资深摄影师、灯光师和后期修图师组成，拥有丰富的商业拍摄经验。
-                        无论是品牌广告、企业形象，还是个人写真，我们都能为你打造独一无二的视觉语言。
-                    </p>
-                    
-                    <div class="stats">
-                        <div class="stat-item">
-                            <h4>6+</h4>
-                            <p>年行业经验</p>
-                        </div>
-                        <div class="stat-item">
-                            <h4>500+</h4>
-                            <p>项目案例</p>
-                        </div>
-                        <div class="stat-item">
-                            <h4>50+</h4>
-                            <p>合作品牌</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="service reveal">
+          <span class="service__num">03</span>
+          <h3 data-i18n="s3_title">时尚摄影</h3>
+          <p data-i18n="s3_desc">服装画册、时尚编辑、Lookbook 拍摄，定义潮流视觉标准。</p>
         </div>
-    </section>
-
-    <!-- 服务 -->
-    <section class="services" id="services">
-        <div class="container">
-            <div class="section-header">
-                <p class="section-tag">Services</p>
-                <h2 class="section-title">我们的服务</h2>
-                <p class="section-desc">提供全方位的专业摄影解决方案</p>
-            </div>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">📷</div>
-                    <h3>商业摄影</h3>
-                    <p>品牌形象片、产品广告、企业宣传册拍摄，助力品牌视觉升级</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">👤</div>
-                    <h3>人像摄影</h3>
-                    <p>个人写真、职业形象照、艺人宣传照，展现最真实动人的你</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">👗</div>
-                    <h3>时尚摄影</h3>
-                    <p>服装画册、时尚编辑、Lookbook 拍摄，定义潮流视觉标准</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🎉</div>
-                    <h3>活动纪实</h3>
-                    <p>发布会、年会、展览现场记录，捕捉每一个精彩瞬间</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">🏢</div>
-                    <h3>空间摄影</h3>
-                    <p>建筑外观、室内空间、酒店民宿摄影，呈现空间设计之美</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">✨</div>
-                    <h3>后期制作</h3>
-                    <p>专业调色、精修、合成服务，让每一张照片都达到出版级品质</p>
-                </div>
-            </div>
+        <div class="service reveal">
+          <span class="service__num">04</span>
+          <h3 data-i18n="s4_title">活动纪实</h3>
+          <p data-i18n="s4_desc">发布会、年会、展览现场记录，捕捉每一个精彩瞬间。</p>
         </div>
-    </section>
-
-    <!-- 联系 -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>开始你的项目</h3>
-                    <p style="color: var(--text-gray); margin-bottom: 40px;">
-                        无论是商业合作还是个人创作，我们都期待与你交流。
-                        填写表单或通过以下方式直接联系我们。
-                    </p>
-
-                    <div class="contact-item">
-                        <div>
-                            <strong>Email</strong>
-                            <p>TonyYoungnb@gmail.com</p> <!-- ✏️ 修改邮箱 -->
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div>
-                            <strong>Phone</strong>
-                            <p>138 0000 0000</p> <!-- ✏️ 修改电话 -->
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div>
-                            <strong>Studio</strong>
-                            <p>日本东京都</p> <!-- ✏️ 修改地址 -->
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div>
-                            <strong>Hours</strong>
-                            <p>周一至周五 10:00 - 19:00</p>
-                        </div>
-                    </div>
-                </div>
-
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('表单提交功能需要后端支持，请使用表单服务如 Formspree 或腾讯问卷');">
-                    <div class="form-group">
-                        <input type="text" id="name" placeholder=" " required>
-                        <label for="name">您的姓名</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" placeholder=" " required>
-                        <label for="email">电子邮箱</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="subject" placeholder=" ">
-                        <label for="subject">项目类型</label>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" placeholder=" " required></textarea>
-                        <label for="message">项目详情</label>
-                    </div>
-                    <button type="submit" class="submit-btn">发送消息</button>
-                </form>
-            </div>
+        <div class="service reveal">
+          <span class="service__num">05</span>
+          <h3 data-i18n="s5_title">空间摄影</h3>
+          <p data-i18n="s5_desc">建筑外观、室内空间、酒店民宿摄影，呈现空间设计之美。</p>
         </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer>
-        <div class="footer-content">
-            <div class="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">WeChat</a>
-                <a href="#">Xiaohongshu</a>
-                <a href="#">Behance</a>
-            </div>
-            <p class="copyright">&copy; 2024 Lenshead Studio. All rights reserved.</p>
+        <div class="service reveal">
+          <span class="service__num">06</span>
+          <h3 data-i18n="s6_title">后期制作</h3>
+          <p data-i18n="s6_desc">专业调色、精修、合成服务，让每一张照片都达到出版级品质。</p>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // 导航栏滚动效果
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
+  <!-- ============ CONTACT ============ -->
+  <section class="section section--alt" id="contact">
+    <div class="container contact">
+      <div class="contact__head reveal">
+        <p class="eyebrow" data-i18n="contact_eyebrow">联系</p>
+        <h2 class="section__title" data-i18n="contact_title">开始你的项目</h2>
+        <p class="section__desc" data-i18n="contact_desc">无论是商业合作还是个人创作，我们都期待与你交流。</p>
+      </div>
+      <div class="contact__grid reveal">
+        <div class="contact__item">
+          <span class="contact__label" data-i18n="contact_email_label">邮箱</span>
+          <a href="mailto:TonyYoungnb@gmail.com">TonyYoungnb@gmail.com</a>
+        </div>
+        <div class="contact__item">
+          <span class="contact__label" data-i18n="contact_phone_label">电话</span>
+          <a href="tel:+819000000000">+81 90-0000-0000</a>
+        </div>
+        <div class="contact__item">
+          <span class="contact__label" data-i18n="contact_studio_label">工作室</span>
+          <span data-i18n="contact_studio_val">日本东京都</span>
+        </div>
+        <div class="contact__item">
+          <span class="contact__label" data-i18n="contact_hours_label">营业时间</span>
+          <span data-i18n="contact_hours_val">周一至周五 10:00–19:00</span>
+        </div>
+      </div>
+      <a href="mailto:TonyYoungnb@gmail.com" class="btn btn--gold reveal" data-i18n="contact_cta">发送邮件</a>
+    </div>
+  </section>
 
-        // 移动端菜单切换（简单版）
-        function toggleMenu() {
-            alert('移动端菜单需要在实际项目中添加展开逻辑');
-        }
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="brand">LENSHEAD<span class="brand__dot">.</span></span>
+        <p class="footer__tag" data-i18n="footer_tagline">镜头之下，光影之间</p>
+      </div>
+      <nav class="footer__nav">
+        <a href="#portfolio" data-i18n="nav_work">作品</a>
+        <a href="#about" data-i18n="nav_about">关于</a>
+        <a href="#services" data-i18n="nav_services">服务</a>
+        <a href="#contact" data-i18n="nav_contact">联系</a>
+      </nav>
+    </div>
+    <div class="container footer__bottom">
+      <span data-i18n="footer_copyright">© 2026 Lenshead Studio. 保留所有权利。</span>
+    </div>
+  </footer>
 
-        // 图片懒加载优化
-        document.addEventListener('DOMContentLoaded', () => {
-            const images = document.querySelectorAll('img[loading="lazy"]');
-            images.forEach(img => {
-                img.addEventListener('load', () => {
-                    img.classList.add('loaded');
-                });
-            });
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
