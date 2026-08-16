@@ -200,11 +200,34 @@ if ("IntersectionObserver" in window) {
   reveals.forEach(el => el.classList.add("is-visible"));
 }
 
-/* ---------- contact form → mailto ---------- */
+/* ---------- contact form → email (pluggable) ----------
+   The form builds a payload and hands it to sendInquiry().
+   Default: opens the visitor's mail client (mailto).
+   To wire a real email service (Formspree / EmailJS / your own
+   API), replace the body of sendInquiry() — the form and
+   validation above stay untouched.
+--------------------------------------------------------- */
+function sendInquiry(payload) {
+  // === INTEGRATION PORT =====================================
+  // Example — Formspree:
+  //   fetch("https://formspree.io/f/XXXXXX", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(payload)
+  //   });
+  //   return;
+  // =========================================================
+  const TO = "TonyYoungnb@gmail.com";
+  const subj = encodeURIComponent(payload.subject || "Lenshead 合作咨询");
+  const body = encodeURIComponent(
+    "姓名：" + payload.name + "\n邮箱：" + payload.email + "\n\n" + payload.message
+  );
+  window.location.href = "mailto:" + TO + "?subject=" + subj + "&body=" + body;
+}
+
 (function () {
   const form = document.getElementById("contactForm");
   if (!form) return;
-  const TO = "TonyYoungnb@gmail.com";
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     const name = form.elements["name"].value.trim();
@@ -216,10 +239,6 @@ if ("IntersectionObserver" in window) {
       firstEmpty.focus();
       return;
     }
-    const subj = encodeURIComponent(subject || "Lenshead 合作咨询");
-    const body = encodeURIComponent(
-      "姓名：" + name + "\n邮箱：" + email + "\n\n" + message
-    );
-    window.location.href = "mailto:" + TO + "?subject=" + subj + "&body=" + body;
+    sendInquiry({ name: name, email: email, subject: subject, message: message });
   });
 })();

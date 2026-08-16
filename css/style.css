@@ -191,22 +191,23 @@ img { max-width: 100%; display: block; }
 }
 @keyframes scrollPulse { 0%,100% { opacity: .3; transform: scaleY(.7);} 50% { opacity: 1; transform: scaleY(1);} }
 
-/* ---------- Hero social (INS / TikTok / 小红书 / 抖音) ---------- */
-.hero__social { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 42px; }
+/* ---------- Hero social (INS / TikTok / 小红书 / 抖音 / 油管 / B站) ---------- */
+.hero__social { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 46px; }
 .hero__social-link {
-  display: inline-flex; align-items: center;
-  padding: 11px 20px;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 24px;
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   color: var(--text);
-  font-family: var(--sans); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
-  background: rgba(255,255,255,0.03);
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  background: rgba(255,255,255,0.04);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   transition: color .35s ease, border-color .35s ease, background .35s ease, transform .35s ease;
 }
+.hero__social-link svg { width: 20px; height: 20px; display: block; flex: none; }
 .hero__social-link:hover {
   color: var(--accent); border-color: var(--accent);
-  background: rgba(201,168,106,0.10); transform: translateY(-2px);
+  background: rgba(201,168,106,0.12); transform: translateY(-3px);
 }
 
 /* ============================================================
@@ -284,29 +285,31 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Contact ---------- */
 .contact { text-align: center; }
-.contact__head { margin-bottom: 50px; }
+.contact__head { margin-bottom: 44px; }
 .contact__head .section__desc { margin-left: auto; margin-right: auto; }
-.contact__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-bottom: 56px; }
-.contact__item { padding: 26px 18px; border: 1px solid var(--line-soft); background: var(--surface); }
-.contact__label { display: block; font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-.contact__item a, .contact__item span:not(.contact__label) { font-size: 16px; color: var(--text); }
-.contact__item a { transition: color .3s ease; }
-.contact__item a:hover { color: var(--accent); }
 
-/* ---------- Contact form (mailto) ---------- */
-.contact__form { max-width: 620px; margin: 0 auto; text-align: left; }
-.contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.contact__field { display: flex; flex-direction: column; margin-bottom: 18px; }
-.contact__field label { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-.contact__field input, .contact__field textarea {
-  background: var(--surface); border: 1px solid var(--line-soft); color: var(--text);
-  padding: 13px 15px; font-family: var(--sans); font-size: 15px; border-radius: 0; outline: none;
-  transition: border-color .3s ease;
+/* hours-only meta */
+.contact__meta {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 10px;
+  padding-top: 30px; margin: 0 auto 60px; border-top: 1px solid var(--line);
 }
-.contact__field input:focus, .contact__field textarea:focus { border-color: var(--accent); }
+.contact__meta-label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); }
+.contact__meta-val { font-family: var(--serif); font-size: clamp(22px, 3vw, 30px); color: var(--text); }
+
+/* ---------- Contact form (pluggable email service) ---------- */
+.contact__form { max-width: 680px; margin: 0 auto; text-align: left; }
+.contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.contact__field { display: flex; flex-direction: column; margin-bottom: 20px; }
+.contact__field label { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
+.contact__field input, .contact__field textarea {
+  background: transparent; border: 1px solid var(--line-soft); color: var(--text);
+  padding: 15px 18px; font-family: var(--sans); font-size: 16px; border-radius: 0; outline: none;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.contact__field input:focus, .contact__field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .contact__field textarea { resize: vertical; }
-.contact__form .btn { margin-top: 6px; }
-.contact__note { display:block; margin-top: 16px; font-size: 13px; color: var(--text-dim); }
+.contact__submit { width: 100%; justify-content: center; margin-top: 8px; padding: 17px; font-size: 15px; letter-spacing: 0.2em; }
+.contact__note { display: block; margin-top: 18px; font-size: 13px; color: var(--text-dim); text-align: center; }
 
 /* ============================================================
    FOOTER
