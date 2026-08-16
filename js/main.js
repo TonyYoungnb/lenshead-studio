@@ -44,7 +44,7 @@ const I18N = {
     "form_name": "姓名", "form_email": "邮箱", "form_subject": "主题",
     "form_message": "留言", "form_submit": "发送邮件",
     "form_note": "提交后我们会通过邮件尽快与你联系。",
-    "form_sending": "发送中…", "form_success": "已收到，我们会尽快回复你！", "form_error": "发送失败，请稍后重试，或直接邮件联系 TonyYoungnb@gmail.com。",
+    "form_email_invalid": "请输入有效的邮箱地址（例如 you@example.com）。", "form_sending": "发送中…", "form_success": "已收到，我们会尽快回复你！", "form_error": "发送失败，请稍后重试，或直接邮件联系 TonyYoungnb@gmail.com。",
     "social_ins": "INS", "social_tiktok": "TIKTOK", "social_xhs": "小红书", "social_douyin": "抖音", "social_youtube": "油管", "social_bilibili": "B站",
     "footer_tagline": "镜头之下，光影之间",
     "footer_copyright": "© 2026 Lenshead Studio. 保留所有权利。"
@@ -90,7 +90,7 @@ const I18N = {
     "form_name": "お名前", "form_email": "メール", "form_subject": "件名",
     "form_message": "メッセージ", "form_submit": "メールする",
     "form_note": "送信後、メールにて速やかにご連絡いたします。",
-    "form_sending": "送信中…", "form_success": "受け付けました。追ってご返信いたします！", "form_error": "送信に失敗しました。しばらくしてから再度お試しいただくか、TonyYoungnb@gmail.com へ直接メールしてください。",
+    "form_email_invalid": "有効なメールアドレスを入力してください（例：you@example.com）。", "form_sending": "送信中…", "form_success": "受け付けました。追ってご返信いたします！", "form_error": "送信に失敗しました。しばらくしてから再度お試しいただくか、TonyYoungnb@gmail.com へ直接メールしてください。",
     "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "レンズの下、光と影の間で",
     "footer_copyright": "© 2026 Lenshead Studio. 全著作権所有。"
@@ -136,7 +136,7 @@ const I18N = {
     "form_name": "Name", "form_email": "Email", "form_subject": "Subject",
     "form_message": "Message", "form_submit": "Send Email",
     "form_note": "After submitting, we'll get back to you by email as soon as possible.",
-    "form_sending": "Sending…", "form_success": "Received — we'll reply shortly!", "form_error": "Sending failed. Please retry, or email TonyYoungnb@gmail.com directly.",
+    "form_email_invalid": "Please enter a valid email address (e.g. you@example.com).", "form_sending": "Sending…", "form_success": "Received — we'll reply shortly!", "form_error": "Sending failed. Please retry, or email TonyYoungnb@gmail.com directly.",
     "social_ins": "Instagram", "social_tiktok": "TikTok", "social_xhs": "Xiaohongshu", "social_douyin": "Douyin", "social_youtube": "YouTube", "social_bilibili": "Bilibili",
     "footer_tagline": "Beneath the Lens, Between Light & Shadow",
     "footer_copyright": "© 2026 Lenshead Studio. All rights reserved."
@@ -267,6 +267,11 @@ function sendInquiry(payload) {
     if (!name || !email || !message) {
       const firstEmpty = !name ? form.elements["name"] : !email ? form.elements["email"] : form.elements["message"];
       firstEmpty.focus();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (statusEl) { statusEl.textContent = t("form_email_invalid"); statusEl.className = "contact__status contact__status--err"; }
+      form.elements["email"].focus();
       return;
     }
     if (statusEl) { statusEl.textContent = t("form_sending"); statusEl.className = "contact__status contact__status--pending"; }
