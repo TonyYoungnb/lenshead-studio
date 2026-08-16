@@ -125,33 +125,63 @@ img { max-width: 100%; display: block; }
 
 /* ============================================================
    HERO  (real photo: images/hero-bg.jpg)
+   - .hero__bg holds the photo so it can scale independently
+   - on hover: slow zoom (1.08) over 1.4s
+   - ambient: gentle 12s breath scale (1.00 → 1.04) always on
    ============================================================ */
 .hero {
   position: relative;
   min-height: 100vh;
   display: flex; align-items: center;
+  overflow: hidden;
+  background: #0c0c0e;
+}
+.hero__bg {
+  position: absolute; inset: 0;
+  background:
+    url('../images/hero-bg.jpg') center / cover no-repeat;
+  z-index: 0;
+  transform: scale(1.02);
+  animation: heroBreath 12s ease-in-out infinite;
+  will-change: transform;
+}
+.hero:hover .hero__bg { animation: none; transform: scale(1.08); transition: transform 1.4s cubic-bezier(.2,.7,.2,1); }
+@keyframes heroBreath {
+  0%, 100% { transform: scale(1.00); }
+  50%      { transform: scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__bg { animation: none; transform: none; }
+  .hero:hover .hero__bg { transform: none; }
+}
+.hero__overlay {
+  position: absolute; inset: 0; z-index: 1;
   background:
     radial-gradient(120% 90% at 75% 15%, rgba(201,168,106,0.12), transparent 55%),
     linear-gradient(180deg, rgba(12,12,14,0.70) 0%, rgba(12,12,14,0.42) 45%, rgba(12,12,14,0.88) 100%),
-    url('../images/hero-bg.jpg') center / cover no-repeat;
-  overflow: hidden;
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0 1px, transparent 1px 3px);
+  pointer-events: none;
 }
-.hero__overlay {
-  position: absolute; inset: 0;
-  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0 1px, transparent 1px 3px);
-  mix-blend-mode: overlay; opacity: .5; pointer-events: none;
-}
-.hero__inner { position: relative; z-index: 2; padding-top: var(--nav-h); }
+.hero__inner { position: relative; z-index: 2; padding-top: var(--nav-h); max-width: 920px; }
+.hero__eyebrow { margin-bottom: 18px; }
 .hero__title {
   font-family: var(--serif);
   font-weight: 600;
-  font-size: clamp(40px, 8vw, 92px);
-  line-height: 1.05;
-  letter-spacing: 0.01em;
-  margin: 8px 0 26px;
-  max-width: 14ch;
+  font-size: clamp(40px, 7.2vw, 84px);
+  line-height: 1.18;
+  letter-spacing: 0.02em;
+  margin: 0 0 32px;
+  max-width: 16ch;
+  text-wrap: balance;
 }
-.hero__sub { color: var(--text-dim); font-size: clamp(15px, 2vw, 19px); max-width: 52ch; margin-bottom: 40px; }
+.hero__sub {
+  color: var(--text-dim);
+  font-size: clamp(15px, 1.55vw, 18px);
+  line-height: 1.75;
+  max-width: 44ch;
+  margin: 0 0 44px;
+  letter-spacing: 0.01em;
+}
 .hero__scroll {
   position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%);
   z-index: 2; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase;
@@ -214,10 +244,16 @@ img { max-width: 100%; display: block; }
 .stat__num { display: block; font-family: var(--serif); font-size: clamp(44px, 7vw, 76px); font-weight: 600; color: var(--accent); line-height: 1; }
 .stat__label { display: block; margin-top: 14px; font-size: 13px; letter-spacing: 0.16em; color: var(--text-dim); text-transform: uppercase; }
 
-/* ---------- Founder / 主理人 (photo placeholder: images/about.jpg → 建议替换为 founder.jpg) ---------- */
+/* ---------- Founder / 主理人 (photo: images/founder.jpg) ---------- */
 .founder { display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 60px; align-items: center; }
-.founder__media { aspect-ratio: 4 / 5; }
-.founder__photo { width: 100%; height: 100%; background: url('../images/about.jpg') center / cover no-repeat; border: 1px solid var(--line); }
+.founder__media { aspect-ratio: 4 / 5; overflow: hidden; }
+.founder__photo {
+  width: 100%; height: 100%;
+  background: url('../images/founder.jpg') center / cover no-repeat;
+  border: 1px solid var(--line);
+  transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+}
+.founder__media:hover .founder__photo { transform: scale(1.05); }
 .founder__role { color: var(--accent); font-size: 15px; letter-spacing: 0.14em; margin: 16px 0 24px; }
 .founder__bio { color: var(--text-dim); font-size: 16px; margin-bottom: 28px; }
 .founder__creds { list-style: none; border-top: 1px solid var(--line); }
