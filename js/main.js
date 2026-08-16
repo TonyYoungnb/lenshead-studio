@@ -216,7 +216,7 @@ if ("IntersectionObserver" in window) {
      • If empty → falls back to opening the visitor's mail client.
    To switch providers (EmailJS / your own API), edit sendInquiry().
 --------------------------------------------------------- */
-const FORMSPREE_ENDPOINT = ""; // ← 填入你的 Formspree 端点，例如 "https://formspree.io/f/abcdwxyz"
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xyegdnrw"; // Formspree 端点：客户表单经此转发到 TonyYoungnb@gmail.com
 const INQUIRY_TO = "TonyYoungnb@gmail.com";
 
 function currentLang() {
