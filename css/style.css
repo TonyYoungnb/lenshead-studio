@@ -389,13 +389,25 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
   grid-template-rows: auto 1fr auto;
   padding: calc(var(--nav-h) + 1.4rem) var(--pad-x) clamp(1.6rem, 4vh, 3rem);
 }
-.hero__media { position: absolute; inset: 0; z-index: 0; }
+.hero__media { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+/* the breathing lives on the <picture> wrapper so it never fights the
+   one-time scale reveal on the <img> or the scroll parallax on .hero__media */
+.hero__media picture {
+  display: block; width: 100%; height: 100%;
+  will-change: transform;
+  animation: heroBreath 18s ease-in-out infinite;
+}
+@keyframes heroBreath {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.032); }   /* inhale */
+  52%  { transform: scale(1.032); }   /* hold at the top */
+  100% { transform: scale(1); }       /* exhale, then rest */
+}
 .hero__media img {
   width: 100%; height: 100%; object-fit: cover;
   transform: scale(1.1);
   filter: contrast(1.07) saturate(1.05);
   transition: transform 2.6s var(--ease);
-  will-change: transform;
 }
 .is-ready .hero__media img { transform: scale(1); }
 .hero__scrim {
@@ -413,7 +425,18 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: radial-gradient(34% 40% at 74% 20%, rgba(255,228,182,.26), transparent 70%);
   mix-blend-mode: screen;
+  /* second, slower breath on the warm highlight — deliberately out of phase
+     with the image scale so the pair reads as light drifting, not a loop */
+  animation: leakBreath 23s ease-in-out infinite;
 }
+@keyframes leakBreath {
+  0%, 100% { opacity: .5; }
+  55%      { opacity: 1; }
+}
+
+/* stop both animations once the hero is well out of view */
+.hero.is-asleep .hero__media picture,
+.hero.is-asleep .hero__leak { animation-play-state: paused; }
 .hero__hud {
   --hud-gap: clamp(.9rem, 2.1vw, 2.3rem);
   position: relative; z-index: 3;
@@ -1025,6 +1048,7 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
   .ln__i { transform: none !important; }
   .mf__text span { opacity: 1 !important; }
   .hero__media img { transform: none !important; }
+  .hero__media picture, .hero__leak { animation: none !important; }
   .grain { animation: none !important; }
   .loader { display: none !important; }
   .cur, .pv { display: none !important; }

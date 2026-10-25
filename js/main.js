@@ -393,6 +393,7 @@
   var wkNow     = $("#wkNow");
   var heroMedia = $("#heroMedia");
   var heroBody  = $(".hero__body");
+  var heroEl    = $(".hero");
   var nav       = $("#nav");
   var railMark  = $("#railMark");
   var railF     = $("#railF");
@@ -461,6 +462,8 @@
       heroMedia.style.transform = "translate3d(0," + (y * 0.16).toFixed(2) + "px,0)";
       if (heroBody) heroBody.style.opacity = String(clamp(1 - y / (vh * 0.75), 0, 1));
     }
+    /* pause the hero breathing animations once it is off-screen */
+    if (heroEl) heroEl.classList.toggle("is-asleep", y > vh * 1.2);
 
     /* manifesto lighting */
     updateManifesto();
