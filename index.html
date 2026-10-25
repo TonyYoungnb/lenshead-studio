@@ -2,294 +2,619 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Lenshead Studio｜镜头之下，光影之间</title>
-  <meta name="description" content="Lenshead 是一家专注于商业摄影、人像艺术与时尚纪实的视觉工作室。" />
+  <meta name="description" content="Lenshead Studio — 东京摄影工作室。我们不拍摄主体，我们拍摄落在主体上的光。商业 / 人像 / 时尚 / 纪实。Since 2018." />
+  <meta name="theme-color" content="#0a0a0b" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Lenshead Studio" />
+  <meta property="og:title" content="Lenshead Studio — We Shoot Light" />
+  <meta property="og:description" content="A Tokyo photography studio. We don't photograph subjects — we photograph the light that falls on them." />
+  <meta property="og:image" content="https://lenshead.top/images/opt/hero-bg-1200.jpg" />
+  <meta property="og:url" content="https://lenshead.top/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/png" href="images/opt/favicon-128.png" />
+  <link rel="apple-touch-icon" href="images/opt/favicon-128.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Inter:wght@300;400;500&family=Space+Mono:wght@400&family=Noto+Serif+SC:wght@400;500&family=Noto+Serif+JP:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- LCP: hero image, responsive preload -->
+  <link rel="preload" as="image" type="image/webp" fetchpriority="high"
+        href="images/opt/hero-bg-1200.webp"
+        imagesrcset="images/opt/hero-bg-800.webp 800w, images/opt/hero-bg-1200.webp 1200w, images/opt/hero-bg-2000.webp 2000w"
+        imagesizes="100vw" />
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body id="top">
+<body>
 
-  <!-- ============ NAV ============ -->
-  <header class="nav" id="nav">
-    <div class="nav__inner container">
-      <a href="#top" class="brand">LENSHEAD<span class="brand__dot">.</span></a>
-      <nav class="nav__links" id="navLinks">
-        <a href="#portfolio" data-i18n="nav_work">作品</a>
-        <a href="#about" data-i18n="nav_about">关于</a>
-        <a href="#founder" data-i18n="nav_founder">主理人</a>
-        <a href="#services" data-i18n="nav_services">服务</a>
-        <a href="#contact" data-i18n="nav_contact">联系</a>
-        <div class="lang" role="group" aria-label="Language">
-          <button class="lang__btn is-active" data-lang="zh">中文</button>
-          <span class="lang__sep">/</span>
-          <button class="lang__btn" data-lang="ja">日本語</button>
-          <span class="lang__sep">/</span>
-          <button class="lang__btn" data-lang="en">EN</button>
-        </div>
-      </nav>
-      <button class="nav__toggle" id="navToggle" aria-label="Menu">
-        <span></span><span></span><span></span>
+<a class="skip" href="#main"><span data-i18n="a11y_skip">跳到主要内容</span></a>
+
+<!-- film grain / scanline overlay -->
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- custom cursor (desktop, fine pointer only) -->
+<div class="cur" id="cur" aria-hidden="true">
+  <div class="cur__ring"><span class="cur__label"></span></div>
+  <div class="cur__dot"></div>
+</div>
+
+<!-- ============ PRELOADER : the aperture ============ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <svg class="loader__iris" id="iris" viewBox="0 0 200 200">
+      <circle class="iris__track" cx="100" cy="100" r="86" />
+      <circle class="iris__bar" id="irisBar" cx="100" cy="100" r="86" />
+      <polygon class="iris__hole" id="irisHex" points="" />
+      <g class="iris__blades" id="irisBlades"></g>
+      <circle class="iris__core" cx="100" cy="100" r="2.4" />
+    </svg>
+    <div class="loader__read">
+      <span class="loader__f" id="loaderF">f/22</span>
+      <span class="loader__pct"><b id="loaderPct">000</b><i>%</i></span>
+    </div>
+    <p class="loader__word">LENSHEAD</p>
+    <p class="loader__hint" data-i18n="loader_hint">显影中</p>
+  </div>
+</div>
+
+<!-- ============ SCROLL RAIL : exposure scale ============ -->
+<div class="rail" aria-hidden="true">
+  <span class="rail__cap">EXPOSURE</span>
+  <div class="rail__scale">
+    <span class="rail__tick"></span><span class="rail__tick"></span><span class="rail__tick"></span>
+    <span class="rail__tick"></span><span class="rail__tick"></span><span class="rail__tick"></span>
+    <span class="rail__tick"></span><span class="rail__tick"></span><span class="rail__tick"></span>
+    <span class="rail__tick"></span><span class="rail__tick"></span><span class="rail__tick"></span>
+    <div class="rail__mark" id="railMark"></div>
+  </div>
+  <span class="rail__f" id="railF">f/1.4</span>
+</div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="nav__bar">
+    <a href="#top" class="mark" aria-label="Lenshead Studio — top">
+      <img class="mark__iris" src="images/opt/about-mark.png" width="256" height="256" alt="" aria-hidden="true" />
+      <span class="mark__word">LENSHEAD</span>
+    </a>
+
+    <nav class="nav__links" id="navLinks" aria-label="Primary">
+      <a href="#work" class="nav__link"><span class="rl"><span data-i18n="nav_work">作品</span><span aria-hidden="true" data-i18n="nav_work">作品</span></span></a>
+      <a href="#studio" class="nav__link"><span class="rl"><span data-i18n="nav_studio">工作室</span><span aria-hidden="true" data-i18n="nav_studio">工作室</span></span></a>
+      <a href="#founder" class="nav__link"><span class="rl"><span data-i18n="nav_founder">主理人</span><span aria-hidden="true" data-i18n="nav_founder">主理人</span></span></a>
+      <a href="#services" class="nav__link"><span class="rl"><span data-i18n="nav_services">服务</span><span aria-hidden="true" data-i18n="nav_services">服务</span></span></a>
+    </nav>
+
+    <div class="nav__end">
+      <div class="lang" role="group" aria-label="Language">
+        <button class="lang__btn is-active" data-lang="zh" type="button">中</button>
+        <button class="lang__btn" data-lang="ja" type="button">日</button>
+        <button class="lang__btn" data-lang="en" type="button">EN</button>
+      </div>
+      <a href="#contact" class="btn btn--pill" data-magnet>
+        <span class="rl"><span data-i18n="nav_cta">联系</span><span aria-hidden="true" data-i18n="nav_cta">联系</span></span>
+      </a>
+      <button class="nav__toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+        <span></span><span></span>
       </button>
     </div>
-  </header>
+  </div>
+</header>
+
+<!-- mobile menu -->
+<div class="menu" id="menu" hidden>
+  <nav class="menu__list" aria-label="Mobile">
+    <a href="#work" class="menu__item"><em>01</em><span data-i18n="nav_work">作品</span></a>
+    <a href="#studio" class="menu__item"><em>02</em><span data-i18n="nav_studio">工作室</span></a>
+    <a href="#founder" class="menu__item"><em>03</em><span data-i18n="nav_founder">主理人</span></a>
+    <a href="#services" class="menu__item"><em>04</em><span data-i18n="nav_services">服务</span></a>
+    <a href="#contact" class="menu__item"><em>05</em><span data-i18n="nav_contact">联系</span></a>
+  </nav>
+  <div class="menu__foot">
+    <a href="mailto:info@lenshead.top">info@lenshead.top</a>
+    <span>Tokyo, Japan</span>
+  </div>
+</div>
+
+<main id="main">
+  <span id="top"></span>
 
   <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero__bg" aria-hidden="true"></div>
-    <div class="hero__overlay"></div>
-    <div class="hero__inner container">
-      <p class="eyebrow hero__eyebrow reveal" data-i18n="hero_eyebrow">专业摄影工作室</p>
-      <h1 class="hero__title reveal" data-i18n="hero_title">镜头之下，光影之间</h1>
-      <p class="hero__sub reveal" data-i18n="hero_subtitle">我们专注于商业摄影、人像艺术与时尚纪实，用镜头讲述属于您的独特故事。</p>
-      <a href="#portfolio" class="btn btn--gold reveal" data-i18n="hero_cta">浏览作品</a>
-      <div class="hero__social reveal">
-        <a class="hero__social-link" href="https://www.instagram.com/bohu_yang" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 1.62c-3.15 0-3.5.01-4.74.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32-1.24-.06-1.59-.07-4.74-.07zm0 2.76a5.46 5.46 0 1 1 0 10.92 5.46 5.46 0 0 1 0-10.92zm0 9a3.54 3.54 0 1 0 0-7.08 3.54 3.54 0 0 0 0 7.08zm5.68-9.22a1.28 1.28 0 1 1-2.56 0 1.28 1.28 0 0 1 2.56 0z"/></svg>
-          <span data-i18n="social_ins">INS</span>
-        </a>
-        <a class="hero__social-link" href="https://www.tiktok.com/@bohu_yang" target="_blank" rel="noopener" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.1v13.4a2.45 2.45 0 0 1-2.44 2.44 2.45 2.45 0 0 1-2.44-2.44 2.45 2.45 0 0 1 2.44-2.44c.2 0 .39.03.57.07v-3.14a5.55 5.55 0 0 0-.57-.03 5.54 5.54 0 0 0-5.53 5.54A5.54 5.54 0 0 0 12.06 20a5.54 5.54 0 0 0 5.53-5.53V9.02a7.27 7.27 0 0 0 4.27 1.37V7.3a4.28 4.28 0 0 1-4.27-2.82z"/></svg>
-          <span data-i18n="social_tiktok">TIKTOK</span>
-        </a>
-        <a class="hero__social-link" href="https://xhslink.cn/o/4KoJ4SHrwMW" target="_blank" rel="noopener" aria-label="Xiaohongshu">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 4h6a3 3 0 0 1 3 3v12.5A2.5 2.5 0 0 0 11.5 17H5V4zm14 0h-6a3 3 0 0 0-3 3v12.5A2.5 2.5 0 0 1 12.5 17H19V4z"/></svg>
-          <span data-i18n="social_xhs">小红书</span>
-        </a>
-        <a class="hero__social-link" href="https://v.douyin.com/c5g3wxS54E4" target="_blank" rel="noopener" aria-label="Douyin">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 5.82a4.28 4.28 0 0 1-1.06-2.82h-3.1v13.4a2.45 2.45 0 0 1-2.44 2.44 2.45 2.45 0 0 1-2.44-2.44 2.45 2.45 0 0 1 2.44-2.44c.2 0 .39.03.57.07v-3.14a5.55 5.55 0 0 0-.57-.03 5.54 5.54 0 0 0-5.53 5.54A5.54 5.54 0 0 0 12.06 20a5.54 5.54 0 0 0 5.53-5.53V9.02a7.27 7.27 0 0 0 4.27 1.37V7.3a4.28 4.28 0 0 1-4.27-2.82z"/></svg>
-          <span data-i18n="social_douyin">抖音</span>
-        </a>
-        <a class="hero__social-link" href="https://www.youtube.com/@bohu_yang" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
-          <span data-i18n="social_youtube">油管</span>
-        </a>
-        <a class="hero__social-link" href="https://b23.tv/e8tWEJs" target="_blank" rel="noopener" aria-label="Bilibili">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.2 3.3a1 1 0 0 1 1.4 0l1.1 1.1a1 1 0 0 1 0 1.4L18.6 7H21a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h3.4L3.3 5.8a1 1 0 0 1 0-1.4l1.1-1.1a1 1 0 0 1 1.4 0L9.4 6.6h5.2L18.2 3.3zM5 10.5v7h14v-7H5zm3 2.5h2v2.5H8v-2.5zm6 0h2v2.5h-2v-2.5z"/></svg>
-          <span data-i18n="social_bilibili">B站</span>
-        </a>
-      </div>
+  <section class="hero" id="hero">
+    <div class="hero__media" id="heroMedia">
+      <picture>
+        <source type="image/webp"
+                srcset="images/opt/hero-bg-800.webp 800w, images/opt/hero-bg-1200.webp 1200w, images/opt/hero-bg-2000.webp 2000w"
+                sizes="100vw" />
+        <img src="images/opt/hero-bg-1200.jpg" width="7369" height="4913"
+             alt="A woman standing on a rocky shore at dusk, looking out to sea" fetchpriority="high" decoding="async" />
+      </picture>
     </div>
-    <a href="#portfolio" class="hero__scroll reveal" data-i18n="hero_scroll">向下滚动</a>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__leak" id="heroLeak" aria-hidden="true"></div>
+
+    <div class="hero__hud">
+      <span class="hud__i"><b>35.6762°N 139.6503°E</b></span>
+      <span class="hud__grp">
+        <span class="hud__i">f/1.4</span>
+        <span class="hud__i">1/250</span>
+        <span class="hud__i">ISO 400</span>
+      </span>
+      <span class="hud__i hud__i--time" id="clock">--:--:--</span>
+    </div>
+
+    <div class="hero__body">
+      <h1 class="hero__title">
+        <span class="ln"><span class="ln__i">WE</span></span>
+        <span class="ln"><span class="ln__i">SHOOT</span></span>
+        <span class="ln"><span class="ln__i ln__i--it">Light</span></span>
+      </h1>
+      <p class="hero__cjk" data-i18n="hero_cjk">光を、撮る。</p>
+    </div>
+
+    <div class="hero__foot">
+      <p class="hero__sub" data-i18n="hero_sub">东京摄影工作室。我们拍摄的不是主体，而是落在主体上的光。</p>
+      <a href="#work" class="hero__scroll" data-cursor="scroll">
+        <span data-i18n="hero_scroll">向下滚动</span>
+        <i aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <span class="hero__side">EST. 2018 — TOKYO</span>
   </section>
 
-  <!-- ============ PORTFOLIO ============ -->
-  <section class="section" id="portfolio">
-    <div class="container">
-      <div class="section__head reveal">
-        <p class="eyebrow" data-i18n="portfolio_eyebrow">作品集</p>
-        <h2 class="section__title" data-i18n="portfolio_title">精选作品</h2>
-        <p class="section__desc" data-i18n="portfolio_desc">每一张照片都是一次精心策划的视觉叙事。</p>
+  <!-- ============ 01 MANIFESTO (light) ============ -->
+  <section class="mf" id="manifesto">
+    <div class="mf__inner">
+      <div class="sec__head">
+        <span class="sec__no">01</span>
+        <h2 class="sec__label" data-i18n="mf_label">宣言</h2>
       </div>
-      <div class="grid grid--3">
-        <a class="pf-card reveal cat-1" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat1_title">光影商业</h3>
-            <span class="pf-card__en" data-i18n="cat1_en">Commercial</span>
-          </div>
-        </a>
-        <a class="pf-card reveal cat-2" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat2_title">情绪人像</h3>
-            <span class="pf-card__en" data-i18n="cat2_en">Portrait</span>
-          </div>
-        </a>
-        <a class="pf-card reveal cat-3" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat3_title">时尚编辑</h3>
-            <span class="pf-card__en" data-i18n="cat3_en">Fashion</span>
-          </div>
-        </a>
-        <a class="pf-card reveal cat-4" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat4_title">瞬间纪实</h3>
-            <span class="pf-card__en" data-i18n="cat4_en">Event</span>
-          </div>
-        </a>
-        <a class="pf-card reveal cat-5" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat5_title">空间美学</h3>
-            <span class="pf-card__en" data-i18n="cat5_en">Architecture</span>
-          </div>
-        </a>
-        <a class="pf-card reveal cat-6" href="#contact">
-          <div class="pf-card__media"></div>
-          <div class="pf-card__body">
-            <h3 data-i18n="cat6_title">静物艺术</h3>
-            <span class="pf-card__en" data-i18n="cat6_en">Product</span>
-          </div>
-        </a>
+      <p class="mf__text" id="mfText" data-split="mf_text"></p>
+      <div class="mf__sign">
+        <span class="mf__sig">Lenshead Studio</span>
+        <span class="mf__note" data-i18n="mf_note">东京 · 自 2018 年</span>
       </div>
     </div>
   </section>
 
-  <!-- ============ ABOUT ============ -->
-  <section class="section section--alt" id="about">
-    <div class="container about">
-      <div class="about__text reveal">
-        <p class="eyebrow" data-i18n="about_eyebrow">关于</p>
-        <h2 class="section__title" data-i18n="about_title">关于 Lenshead</h2>
-        <p class="about__p" data-i18n="about_text">成立于 2018 年，Lenshead 摄影工作室致力于为客户提供高端定制化的影像服务。我们相信，优秀的摄影作品不仅是技术的展现，更是情感的传递。我们的团队由资深摄影师、灯光师与后期修图师组成，拥有丰富的商业拍摄经验——无论是品牌广告、企业形象，还是个人写真，我们都能为您打造独一无二的视觉语言。</p>
+  <!-- ============ 02 SELECTED WORKS (pinned horizontal) ============ -->
+  <section class="works" id="work">
+    <div class="works__pin">
+      <div class="works__head">
+        <div class="sec__head sec__head--row">
+          <span class="sec__no">02</span>
+          <h2 class="sec__label" data-i18n="wk_label">精选作品</h2>
+        </div>
+        <div class="works__count">
+          <b id="wkNow">01</b><i>/</i><span>06</span>
+        </div>
       </div>
-      <div class="about__media reveal">
-        <div class="about__photo"></div>
+
+      <div class="works__viewport">
+        <div class="works__track" id="wkTrack">
+
+          <article class="wk wk--tall" data-work="0">
+            <div class="wk__media media" style="--ar:3/4;--lqip:url('data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwBACdASoYACAAPwl2r1IrpyQiqA1RcCEJZQAAves3/UTOQjBjtaC+jGGulbvp1+AA/vhHsZL7k9ybZ3bFrzLp9TlDQqE4+qsf4BseeTBhGyAMyphbznqUA0VYJrBEaBEC3YEIMfVXbppStX79TZl4aBC0qqACgAA=')">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-1-768.webp" />
+                <img src="images/opt/portfolio-1-768.jpg" width="768" height="1024" loading="lazy" decoding="async"
+                     alt="Amber perfume bottle on a dark surface, lit from behind" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">001</span>
+              <h3 class="wk__title">L’AU DE PAPYRUS</h3>
+              <p class="wk__cat" data-i18n="wk_cat1">静物 · 商业</p>
+              <span class="wk__exif">f/8 · 1/160 · 100mm</span>
+            </div>
+          </article>
+
+          <article class="wk wk--xtall" data-work="1">
+            <div class="wk__media media" style="--ar:2/3;--lqip:url('data:image/webp;base64,UklGRiQBAABXRUJQVlA4IBgBAABwBwCdASoYACQAPwl4tVQrpyUjJWsxcCEJZgC+e1pGUdHxbiAKf5fKFk0qPcQUKccN2rN9jJ2R1cndAMuqQA5V0aFmAAD+9W3oaOUz92rGs+PPgy5pONVszjLm2c6knIT6fGcO/pIXSAEy0sO7NwnJ0m5G7n/9oikrVln021tn+738vrTaT2/xtKTIwX6pXKGGCN4SJWMuoV5z7Pon5MZPactE11Bssze/L1tNP06KRM9r0jFnqI8BZqQnNMUsNWHom4JBRThZz3+drVyBR8igoizIHqn1wmMgJT6968LwMGcG2Gmxz6Hoygm/iLTGqypYqK1k+Rg7cbJTtFuG8rixFLz+QF9NLUVBJUMf4HTNNLuP3EH3AAAA">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-3-900.webp 900w, images/opt/portfolio-3-1080.webp 1080w" sizes="40vw" />
+                <img src="images/opt/portfolio-3-1080.jpg" width="1080" height="1620" loading="lazy" decoding="async"
+                     alt="Woman in a white lace kimono with pink hair, against a red wall and hard sunlight" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">002</span>
+              <h3 class="wk__title">紅と白 / Beni to Shiro</h3>
+              <p class="wk__cat" data-i18n="wk_cat2">时尚 · 编辑</p>
+              <span class="wk__exif">f/2 · 1/500 · 85mm</span>
+            </div>
+          </article>
+
+          <article class="wk wk--wide" data-work="2">
+            <div class="wk__media media" style="--ar:3/2;--lqip:url('data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAADwAwCdASoYABAAPwlurk+rpiQiMAgBcCEJQAAL3gZtg6saq/GLC2MIAPyMn12xxFMl5T9oL+5upWvmU9FPWJokP/+PqQj9065Dpje7KlnXpNYbUNfscctUCjuvLc1rzN8Nb+vRyqRfEzVOdsLZAkOzBB85AYA+VeHLspbYX09sYasyeJcVXoGmR3a794LZAI/7TL4HAHBC6+gA">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-2-900.webp 900w, images/opt/portfolio-2-1600.webp 1600w" sizes="46vw" />
+                <img src="images/opt/portfolio-2-1600.jpg" width="1620" height="1080" loading="lazy" decoding="async"
+                     alt="Portrait of a woman with a white flower in her hair, warm afternoon light" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">003</span>
+              <h3 class="wk__title">HANA</h3>
+              <p class="wk__cat" data-i18n="wk_cat3">人像 · 自然光</p>
+              <span class="wk__exif">f/1.8 · 1/1000 · 50mm</span>
+            </div>
+          </article>
+
+          <article class="wk wk--tall" data-work="3">
+            <div class="wk__media media" style="--ar:3/4;--lqip:url('data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAABQBQCdASoYACAAPwl2sFIrpyQiqA1RcCEJQBj8giVUxayr4gu+j8MoKGxv2fvAXgiwLQAA/u6Qy4r+79x67l807y4/1p63Q/kiP0dIhB4hvFLFnr9S8DzVwmUmctxbw7k0/ivKyYLW7VF9QWtM/B/u69B+gFHoEooGVH6cuE+GfvKB9aSxDv0l60Zwb8ZyWeScmtuVI6/pBx0mtf4Jf8hvSHkxDRmWwMA/qHbjB5uySXs34AA">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-4-768.webp" />
+                <img src="images/opt/portfolio-4-768.jpg" width="768" height="1024" loading="lazy" decoding="async"
+                     alt="A guitarist on stage in a spotlight, silhouetted crowd in the foreground" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">004</span>
+              <h3 class="wk__title">AFTER DARK</h3>
+              <p class="wk__cat" data-i18n="wk_cat4">现场 · 演出</p>
+              <span class="wk__exif">f/1.4 · 1/125 · 35mm</span>
+            </div>
+          </article>
+
+          <article class="wk wk--tall" data-work="4">
+            <div class="wk__media media" style="--ar:3/4;--lqip:url('data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAACQBQCdASoYACAAPwlyslGrpqSisBgIAXAhCWUAAI9t9HsiJl6gN+HNPUyd76IYxJOnpmgVgAD+8vctY833qPwS240GQKjwDEFGkd8Od7Pz1WTyTCEPLreR0cKk5jSdspjR4ldypfnPgAWSF69528L77gfe271o7Hh/I8z+6EIOPWbaCj1cf6UCt44HsNYf0Ah4zQ7AB8nNnRcAeCkWFYI0M5VGJl8G/DV5CtYsc6WSDVugSI3YEmYIKWp82bz9I6+x6j44eU8oCAAA">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-5-768.webp" />
+                <img src="images/opt/portfolio-5-768.jpg" width="768" height="1024" loading="lazy" decoding="async"
+                     alt="Concrete interior with a wooden stair and a shaft of daylight across the floor" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">005</span>
+              <h3 class="wk__title">CONCRETE LIGHT</h3>
+              <p class="wk__cat" data-i18n="wk_cat5">空间 · 建筑</p>
+              <span class="wk__exif">f/11 · 1/60 · 24mm</span>
+            </div>
+          </article>
+
+          <article class="wk wk--tall" data-work="5">
+            <div class="wk__media media" style="--ar:3/4;--lqip:url('data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAABwBQCdASoYACAAPwl2tlKrpyUiqAqpcCEJYwCw7DTww+qToml5Vw9SK9tXzKt7rObcoLVAAP70KGCMmcWbR0dvYuQABGMYkXEOccEW4dufls8Re/DgtdUjcvGKAnW+iYj2zf4ykuP/mql0TDW8SNYYga/eh8bAbIsNZ/hfVS9pL06zmWh1tgL6njhj/YKN6wnRUV2ooDwhnUzOjQJ9ciLWuKDmIHJ3xVgAAA">
+              <picture>
+                <source type="image/webp" srcset="images/opt/portfolio-6-768.webp" />
+                <img src="images/opt/portfolio-6-768.jpg" width="768" height="1024" loading="lazy" decoding="async"
+                     alt="Dried grasses in a ceramic vase beside a small brass sphere, warm dark still life" />
+              </picture>
+            </div>
+            <div class="wk__meta">
+              <span class="wk__no">006</span>
+              <h3 class="wk__title">STILL / LIFE</h3>
+              <p class="wk__cat" data-i18n="wk_cat6">静物 · 陈设</p>
+              <span class="wk__exif">f/5.6 · 1/80 · 90mm</span>
+            </div>
+          </article>
+
+          <div class="wk wk--end">
+            <div class="wk__end">
+              <p data-i18n="wk_end">还有更多，在档案里。</p>
+              <a href="#contact" class="btn btn--ghost" data-magnet><span data-i18n="wk_end_cta">索取完整作品集</span></a>
+            </div>
+          </div>
+
+        </div>
       </div>
-    </div>
-    <div class="container stats reveal">
-      <div class="stat">
-        <span class="stat__num">6+</span>
-        <span class="stat__label" data-i18n="stat1_label">年行业经验</span>
-      </div>
-      <div class="stat">
-        <span class="stat__num">500+</span>
-        <span class="stat__label" data-i18n="stat2_label">项目案例</span>
-      </div>
-      <div class="stat">
-        <span class="stat__num">50+</span>
-        <span class="stat__label" data-i18n="stat3_label">合作品牌</span>
+
+      <div class="works__bar">
+        <div class="works__prog"><i id="wkProg"></i></div>
+        <div class="works__nav">
+          <button class="works__btn" id="wkPrev" type="button" aria-label="Previous work">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+          <button class="works__btn" id="wkNext" type="button" aria-label="Next work">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ FOUNDER ============ -->
-  <section class="section" id="founder">
-    <div class="container founder">
-      <div class="founder__media reveal">
-        <div class="founder__photo"></div>
+  <!-- ============ 03 INDEX : typographic list w/ cursor preview ============ -->
+  <section class="ix" id="index">
+    <div class="ix__inner">
+      <div class="sec__head sec__head--row">
+        <span class="sec__no">03</span>
+        <h2 class="sec__label" data-i18n="ix_label">档案索引</h2>
       </div>
-      <div class="founder__text reveal">
-        <p class="eyebrow" data-i18n="founder_eyebrow">主理人</p>
-        <h2 class="section__title" data-i18n="founder_title">楊伯虎 Young</h2>
-        <p class="founder__role" data-i18n="founder_role">Lenshead 创始人 · 首席摄影师 / 视觉导演</p>
-        <p class="founder__bio" data-i18n="founder_bio1">楊伯虎（Young）是 Lenshead Studio 的主理人，也是镜头背后的核心创作者。他相信影像是情感与叙事的容器，擅长以电影化的语言捕捉人物最真实的瞬间。</p>
-        <ul class="founder__creds">
-          <li data-i18n="founder_c1">毕业于美国天普大学克莱因传媒学院（Klein College of Media and Communication），主攻影像叙事与导演。</li>
-          <li data-i18n="founder_c2">早年投身电影创作，参与多部院线及独立电影的拍摄与制作。</li>
-          <li data-i18n="founder_c3">其参与制作的影片《Burning Sea》正入围戛纳电影节附属展映单元。</li>
-          <li data-i18n="founder_c4">回国后深耕商业与人像摄影，曾为多位粉丝量破百万的头部博主掌镜。</li>
-        </ul>
+
+      <div class="ix__table" id="ixTable">
+        <div class="ix__hrow" aria-hidden="true">
+          <span data-i18n="ix_col1">编号 / 作品</span>
+          <span data-i18n="ix_col2">类型</span>
+          <span data-i18n="ix_col3">年份</span>
+        </div>
+
+        <a class="ix__row" href="#work" data-preview="portfolio-1" data-work="0">
+          <span class="ix__c1"><em>001</em><span>L’AU DE PAPYRUS</span></span>
+          <span class="ix__c2" data-i18n="wk_cat1">静物 · 商业</span>
+          <span class="ix__c3">2024</span>
+        </a>
+        <a class="ix__row" href="#work" data-preview="portfolio-3" data-work="1">
+          <span class="ix__c1"><em>002</em><span>紅と白 / Beni to Shiro</span></span>
+          <span class="ix__c2" data-i18n="wk_cat2">时尚 · 编辑</span>
+          <span class="ix__c3">2025</span>
+        </a>
+        <a class="ix__row" href="#work" data-preview="portfolio-2" data-work="2">
+          <span class="ix__c1"><em>003</em><span>HANA</span></span>
+          <span class="ix__c2" data-i18n="wk_cat3">人像 · 自然光</span>
+          <span class="ix__c3">2023</span>
+        </a>
+        <a class="ix__row" href="#work" data-preview="portfolio-4" data-work="3">
+          <span class="ix__c1"><em>004</em><span>AFTER DARK</span></span>
+          <span class="ix__c2" data-i18n="wk_cat4">现场 · 演出</span>
+          <span class="ix__c3">2024</span>
+        </a>
+        <a class="ix__row" href="#work" data-preview="portfolio-5" data-work="4">
+          <span class="ix__c1"><em>005</em><span>CONCRETE LIGHT</span></span>
+          <span class="ix__c2" data-i18n="wk_cat5">空间 · 建筑</span>
+          <span class="ix__c3">2022</span>
+        </a>
+        <a class="ix__row" href="#work" data-preview="portfolio-6" data-work="5">
+          <span class="ix__c1"><em>006</em><span>STILL / LIFE</span></span>
+          <span class="ix__c2" data-i18n="wk_cat6">静物 · 陈设</span>
+          <span class="ix__c3">2023</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- ============ SERVICES ============ -->
-  <section class="section" id="services">
-    <div class="container">
-      <div class="section__head reveal">
-        <p class="eyebrow" data-i18n="services_eyebrow">服务</p>
-        <h2 class="section__title" data-i18n="services_title">我们的服务</h2>
-        <p class="section__desc" data-i18n="services_desc">提供全方位的专业摄影解决方案。</p>
+  <!-- ============ 04 STUDIO ============ -->
+  <section class="st" id="studio">
+    <div class="st__inner">
+      <div class="sec__head sec__head--row">
+        <span class="sec__no">04</span>
+        <h2 class="sec__label" data-i18n="st_label">工作室</h2>
       </div>
-      <div class="grid grid--3 services">
-        <div class="service reveal">
-          <span class="service__num">01</span>
-          <h3 data-i18n="s1_title">商业摄影</h3>
-          <p data-i18n="s1_desc">品牌形象片、产品广告、企业宣传册拍摄，助力品牌视觉升级。</p>
+
+      <div class="st__grid">
+        <div class="st__lead">
+          <h2 class="st__title" data-i18n="st_title">一间为光而存在的<br />东京工作室</h2>
         </div>
-        <div class="service reveal">
-          <span class="service__num">02</span>
-          <h3 data-i18n="s2_title">人像摄影</h3>
-          <p data-i18n="s2_desc">个人写真、职业形象照、艺人宣传照，展现最真实动人的你。</p>
+        <div class="st__copy">
+          <p data-i18n="st_p1">Lenshead 成立于 2018 年。我们为品牌与个人提供从概念、拍摄到后期的完整影像服务——从一张产品图，到一整个品牌的视觉语言。</p>
+          <p data-i18n="st_p2">团队由摄影师、灯光师与修图师组成。我们不追求「好看」，我们追求准确：准确的光，准确的质感，准确的沉默。</p>
+          <div class="st__mark">
+            <img class="st__logo" src="images/opt/about-mark.png" width="440" height="440"
+                 alt="Lenshead Studio" loading="lazy" decoding="async" />
+            <span class="st__est">EST.<br />2018</span>
+          </div>
         </div>
-        <div class="service reveal">
-          <span class="service__num">03</span>
-          <h3 data-i18n="s3_title">时尚摄影</h3>
-          <p data-i18n="s3_desc">服装画册、时尚编辑、Lookbook 拍摄，定义潮流视觉标准。</p>
-        </div>
-        <div class="service reveal">
-          <span class="service__num">04</span>
-          <h3 data-i18n="s4_title">活动纪实</h3>
-          <p data-i18n="s4_desc">发布会、年会、展览现场记录，捕捉每一个精彩瞬间。</p>
-        </div>
-        <div class="service reveal">
-          <span class="service__num">05</span>
-          <h3 data-i18n="s5_title">空间摄影</h3>
-          <p data-i18n="s5_desc">建筑外观、室内空间、酒店民宿摄影，呈现空间设计之美。</p>
-        </div>
-        <div class="service reveal">
-          <span class="service__num">06</span>
-          <h3 data-i18n="s6_title">后期制作</h3>
-          <p data-i18n="s6_desc">专业调色、精修、合成服务，让每一张照片都达到出版级品质。</p>
+      </div>
+
+      <dl class="st__stats">
+        <div class="stat"><dt data-i18n="st_s1">年 · 行业经验</dt><dd><b data-count="7">0</b><i>+</i></dd></div>
+        <div class="stat"><dt data-i18n="st_s2">项目案例</dt><dd><b data-count="500">0</b><i>+</i></dd></div>
+        <div class="stat"><dt data-i18n="st_s3">合作品牌</dt><dd><b data-count="50">0</b><i>+</i></dd></div>
+        <div class="stat"><dt data-i18n="st_s4">东京 · 常驻团队</dt><dd><b data-count="4">0</b><i></i></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ 05 FOUNDER (light) ============ -->
+  <section class="fd" id="founder">
+    <div class="fd__inner">
+      <div class="sec__head sec__head--row">
+        <span class="sec__no">05</span>
+        <h2 class="sec__label" data-i18n="fd_label">主理人</h2>
+      </div>
+
+      <div class="fd__grid">
+        <figure class="fd__fig">
+          <div class="media fd__photo" style="--ar:1/1;--lqip:url('data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAABQBQCdASoYABgAPwl6sFOrp6QiqAqpcCEJYwDM0y4wxa1Ss4CawgdchxCP+c2N4Y2BgAAA/uNLXQARpfXo/aDuYSBY+tPJAvPMDfujwNDJ8IIzqShi4s3oDQNCPgsGwpV0risGyIQJ47fQCPyeEhzZ7AgMYp7h+Qy6gFOmquGCdZ3HXwkRxaxmu5btIBZlWfIO7n5DNAAAAA==')">
+            <picture>
+              <source type="image/webp" srcset="images/opt/founder-540.webp" />
+              <img src="images/opt/founder-540.jpg" width="540" height="540" loading="lazy" decoding="async"
+                   alt="Childhood photograph of Yang Bohu wearing headphones and red sunglasses, singing into a microphone" />
+            </picture>
+          </div>
+          <figcaption data-i18n="fd_caption">第一次握住麦克风。那年他还不知道，二十年后自己会用镜头讲同样的故事。</figcaption>
+        </figure>
+
+        <div class="fd__text">
+          <h2 class="fd__name">楊伯虎 <em>Young</em></h2>
+          <p class="fd__role" data-i18n="fd_role">创始人 · 首席摄影师 / 视觉导演</p>
+
+          <blockquote class="fd__quote" data-i18n="fd_quote">「影像不是记录，是容器。」</blockquote>
+
+          <p class="fd__bio" data-i18n="fd_bio">楊伯虎（Young）是 Lenshead Studio 的创始人。他相信影像是情感与叙事的容器，擅长以电影化的语言捕捉人物最真实的瞬间——这也是他把工作室命名为「镜头之首」的原因：一切从光进入镜头的那一刻开始。</p>
+
+          <ol class="fd__creds">
+            <li><em>i</em><span data-i18n="fd_c1">毕业于美国天普大学克莱因传媒学院（Klein College of Media and Communication），主攻影像叙事与导演。</span></li>
+            <li><em>ii</em><span data-i18n="fd_c2">早年投身电影创作，参与多部院线及独立电影的拍摄与制作。</span></li>
+            <li><em>iii</em><span data-i18n="fd_c3">参与制作的影片《Burning Sea》入围戛纳电影节附属展映单元。</span></li>
+            <li><em>iv</em><span data-i18n="fd_c4">回国后深耕商业与人像摄影，曾为多位粉丝量破百万的头部创作者掌镜。</span></li>
+          </ol>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ CONTACT ============ -->
-  <section class="section section--alt" id="contact">
-    <div class="container contact">
-      <div class="contact__head reveal">
-        <p class="eyebrow" data-i18n="contact_eyebrow">联系</p>
-        <h2 class="section__title" data-i18n="contact_title">开始你的项目</h2>
-        <p class="section__desc" data-i18n="contact_desc">无论是商业合作还是个人创作，我们都期待与你交流。</p>
+  <!-- ============ 06 SERVICES ============ -->
+  <section class="sv" id="services">
+    <div class="sv__inner">
+      <div class="sec__head sec__head--row">
+        <span class="sec__no">06</span>
+        <h2 class="sec__label" data-i18n="sv_label">服务</h2>
       </div>
-      <div class="contact__meta reveal">
-        <div class="contact__meta-item">
-          <span class="contact__meta-label" data-i18n="contact_hours_label">营业时间</span>
-          <span class="contact__meta-val" data-i18n="contact_hours_val">周一至周五 10:00–19:00</span>
-        </div>
-        <div class="contact__meta-item">
-          <span class="contact__meta-label" data-i18n="contact_email_label">邮箱</span>
-          <a class="contact__meta-val" href="mailto:info@lenshead.top">info@lenshead.top</a>
-        </div>
+
+      <ul class="sv__list">
+        <li class="sv__row">
+          <span class="sv__n">01</span>
+          <h3 class="sv__t" data-i18n="s1_title">商业摄影</h3>
+          <p class="sv__d" data-i18n="s1_desc">品牌形象片、产品广告、企业宣传册拍摄，助力品牌视觉升级。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-1-768.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+        <li class="sv__row">
+          <span class="sv__n">02</span>
+          <h3 class="sv__t" data-i18n="s2_title">人像摄影</h3>
+          <p class="sv__d" data-i18n="s2_desc">个人写真、职业形象照、艺人宣传照，展现最真实动人的你。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-2-900.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+        <li class="sv__row">
+          <span class="sv__n">03</span>
+          <h3 class="sv__t" data-i18n="s3_title">时尚摄影</h3>
+          <p class="sv__d" data-i18n="s3_desc">服装画册、时尚编辑、Lookbook 拍摄，定义潮流视觉标准。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-3-900.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+        <li class="sv__row">
+          <span class="sv__n">04</span>
+          <h3 class="sv__t" data-i18n="s4_title">活动纪实</h3>
+          <p class="sv__d" data-i18n="s4_desc">发布会、年会、展览现场记录，捕捉每一个精彩瞬间。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-4-768.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+        <li class="sv__row">
+          <span class="sv__n">05</span>
+          <h3 class="sv__t" data-i18n="s5_title">空间摄影</h3>
+          <p class="sv__d" data-i18n="s5_desc">建筑外观、室内空间、酒店民宿摄影，呈现空间设计之美。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-5-768.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+        <li class="sv__row">
+          <span class="sv__n">06</span>
+          <h3 class="sv__t" data-i18n="s6_title">后期制作</h3>
+          <p class="sv__d" data-i18n="s6_desc">专业调色、精修、合成服务，让每一张照片都达到出版级品质。</p>
+          <span class="sv__peek" aria-hidden="true"><img src="images/opt/portfolio-6-768.webp" alt="" loading="lazy" decoding="async" width="600" height="800" /></span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 07 CONTACT ============ -->
+  <section class="ct" id="contact">
+    <div class="ct__inner">
+      <div class="sec__head sec__head--row">
+        <span class="sec__no">07</span>
+        <h2 class="sec__label" data-i18n="ct_label">联系</h2>
       </div>
-      <form class="contact__form reveal" id="contactForm" novalidate>
-        <div class="contact__hp" aria-hidden="true">
-          <label for="cf-company">公司</label>
-          <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off" />
+
+      <div class="ct__head">
+        <h2 class="ct__title">
+          <span class="ln"><span class="ln__i">LET’S</span></span>
+          <span class="ln"><span class="ln__i ln__i--it">make</span></span>
+          <span class="ln"><span class="ln__i">LIGHT</span></span>
+        </h2>
+        <aside class="ct__aside">
+          <img class="ct__aside-iris" src="images/opt/about-mark.png" width="256" height="256" alt="" aria-hidden="true" />
+          <p class="ct__avail" data-i18n="ct_avail">2027 Q1 档期开放中</p>
+        </aside>
+      </div>
+      <p class="ct__sub" data-i18n="ct_desc">商业合作、杂志约稿、个人创作 —— 告诉我们你想拍什么。</p>
+
+      <div class="ct__grid">
+        <div class="ct__info">
+          <div class="ct__item">
+            <span class="ct__k" data-i18n="ct_email_label">邮箱</span>
+            <a class="ct__v ct__v--mail" href="mailto:info@lenshead.top">info@lenshead.top</a>
+          </div>
+          <div class="ct__item">
+            <span class="ct__k" data-i18n="ct_studio_label">工作室</span>
+            <span class="ct__v" data-i18n="ct_studio_val">日本 · 东京</span>
+          </div>
+          <div class="ct__item">
+            <span class="ct__k" data-i18n="ct_hours_label">营业时间</span>
+            <span class="ct__v" data-i18n="ct_hours_val">周一至周五 10:00–19:00 (JST)</span>
+          </div>
+          <div class="ct__item ct__item--social">
+            <span class="ct__k" data-i18n="ct_social_label">社交</span>
+            <div class="ct__social">
+              <a href="https://www.instagram.com/bohu_yang" target="_blank" rel="noopener">Instagram</a>
+              <a href="https://xhslink.cn/o/4KoJ4SHrwMW" target="_blank" rel="noopener">Xiaohongshu</a>
+              <a href="https://www.youtube.com/@bohu_yang" target="_blank" rel="noopener">YouTube</a>
+              <a href="https://b23.tv/e8tWEJs" target="_blank" rel="noopener">Bilibili</a>
+              <a href="https://www.tiktok.com/@bohu_yang" target="_blank" rel="noopener">TikTok</a>
+            </div>
+          </div>
         </div>
-        <div class="contact__row">
-          <div class="contact__field">
+
+        <form class="ct__form" id="contactForm" novalidate>
+          <div class="ct__hp" aria-hidden="true">
+            <label for="cf-company">Company</label>
+            <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder=" " />
             <label for="cf-name" data-i18n="form_name">姓名</label>
-            <input type="text" id="cf-name" name="name" autocomplete="name" required />
           </div>
-          <div class="contact__field">
+          <div class="field">
+            <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder=" " />
             <label for="cf-email" data-i18n="form_email">邮箱</label>
-            <input type="email" id="cf-email" name="email" autocomplete="email" required />
           </div>
-        </div>
-        <div class="contact__field">
-          <label for="cf-subject" data-i18n="form_subject">主题</label>
-          <input type="text" id="cf-subject" name="subject" />
-        </div>
-        <div class="contact__field">
-          <label for="cf-message" data-i18n="form_message">留言</label>
-          <textarea id="cf-message" name="message" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="btn btn--gold contact__submit" data-i18n="form_submit">发送邮件</button>
-        <span class="contact__note" data-i18n="form_note">提交后我们会通过邮件尽快与你联系。</span>
-        <p class="contact__status" id="cf-status" role="status" aria-live="polite"></p>
-      </form>
+          <div class="field">
+            <input type="text" id="cf-subject" name="subject" placeholder=" " />
+            <label for="cf-subject" data-i18n="form_subject">主题</label>
+          </div>
+          <div class="field">
+            <textarea id="cf-message" name="message" rows="3" required placeholder=" "></textarea>
+            <label for="cf-message" data-i18n="form_message">留言</label>
+          </div>
+
+          <div class="ct__submit">
+            <button type="submit" class="btn btn--solid" data-magnet>
+              <span class="rl"><span data-i18n="form_submit">发送</span><span aria-hidden="true" data-i18n="form_submit">发送</span></span>
+            </button>
+            <span class="ct__note" data-i18n="form_note">提交后我们会通过邮件尽快回复。</span>
+          </div>
+          <p class="ct__status" id="cf-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
     </div>
   </section>
+</main>
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div class="footer__brand">
-        <span class="brand">LENSHEAD<span class="brand__dot">.</span></span>
-        <p class="footer__tag" data-i18n="footer_tagline">镜头之下，光影之间</p>
-      </div>
-      <nav class="footer__nav">
-        <a href="#portfolio" data-i18n="nav_work">作品</a>
-        <a href="#about" data-i18n="nav_about">关于</a>
-        <a href="#founder" data-i18n="nav_founder">主理人</a>
-        <a href="#services" data-i18n="nav_services">服务</a>
-        <a href="#contact" data-i18n="nav_contact">联系</a>
-      </nav>
+<!-- ============ FOOTER ============ -->
+<footer class="ft">
+  <div class="ft__top">
+    <div class="ft__col">
+      <span class="ft__k" data-i18n="ft_tagline">镜头之下，光影之间</span>
+      <a href="mailto:info@lenshead.top" class="ft__mail">info@lenshead.top</a>
     </div>
-    <div class="container footer__bottom">
-      <span data-i18n="footer_copyright">© 2026 Lenshead Studio. 保留所有权利。</span>
+    <div class="ft__col ft__col--r">
+      <span class="ft__k">TOKYO</span>
+      <span class="ft__clock" id="clock2">--:--:--</span>
     </div>
-  </footer>
+  </div>
 
-  <script src="js/main.js"></script>
+  <div class="ft__word" aria-hidden="true">LENSHEAD</div>
+
+  <div class="ft__bottom">
+    <span data-i18n="ft_rights">© 2026 Lenshead Studio. 保留所有权利。</span>
+    <span class="ft__dot" aria-hidden="true"></span>
+    <span data-i18n="ft_designed">东京设计 · 手工编写</span>
+    <a href="#top" class="ft__up" data-magnet><span data-i18n="ft_top">回到顶部</span><i aria-hidden="true"></i></a>
+  </div>
+</footer>
+
+<!-- cursor-following preview for the index list -->
+<div class="pv" id="pv" aria-hidden="true">
+  <div class="pv__in"><img alt="" id="pvImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" /></div>
+  <span class="pv__no" id="pvNo">001</span>
+</div>
+
+<noscript>
+  <style>
+    .loader, .cur, .rail, .pv { display: none !important; }
+    .ln__i { transform: none !important; }
+    .mf__text span { opacity: 1 !important; }
+    .works__pin { position: static !important; height: auto !important; }
+    .works { height: auto !important; }
+    .works__viewport { overflow-x: auto !important; }
+    .menu { display: none !important; }
+  </style>
+</noscript>
+
+<script src="js/main.js"></script>
 </body>
 </html>
