@@ -34,7 +34,7 @@
              "Songti SC", "Hiragino Mincho ProN", serif;
 
   --t-hero:  clamp(3.3rem, 13.2vw, 14.5rem);
-  --t-disp:  clamp(2.05rem, 6vw, 5rem);
+  --t-disp:  clamp(2.7rem, 8.4vw, 8rem);
   --t-h2:    clamp(1.65rem, 3.5vw, 3rem);
   --t-body:  clamp(.95rem, 1.02vw, 1.0625rem);
   --t-mono:  clamp(.62rem, .76vw, .75rem);
@@ -111,7 +111,9 @@ h1, h2, h3, p { margin: 0; }
 .is-ready .ln:nth-child(1) .ln__i { transition-delay: .12s; }
 .is-ready .ln:nth-child(2) .ln__i { transition-delay: .22s; }
 .is-ready .ln:nth-child(3) .ln__i { transition-delay: .32s; }
-.ln__i--it { font-style: italic; letter-spacing: -.012em; }
+/* uppercase italic: same cap height as the roman lines, so "LIGHT" reads as
+   part of the same phrase instead of a smaller, half-illegible swash */
+.ln__i--it { font-style: italic; text-transform: uppercase; letter-spacing: 0; }
 
 /* section head */
 .sec__head {
@@ -175,40 +177,79 @@ a:hover .rl > span:last-child,  button:hover .rl > span:last-child  { transform:
 .vignette {
   position: fixed; inset: 0; z-index: 899; pointer-events: none;
   background: radial-gradient(130% 100% at 50% 42%, transparent 62%, rgba(0,0,0,.3) 100%);
+  transition: opacity .6s ease;
 }
+/* the dark vignette would grey down the corners of the paper sections */
+html[data-tone="light"] .vignette { opacity: .22; }
 
 .cur { display: none; }
+
+/* --------------------------------------------------------------------------
+   cursor — an autofocus reticle, not a ring.
+   Four corner brackets + a sharp centre point. Colour is driven by
+   html[data-tone] so it stays legible on both the darkroom sections and the
+   paper ones; a hairline drop-shadow carries it over photographs.
+   -------------------------------------------------------------------------- */
 html.has-cursor .cur {
   display: block; position: fixed; top: 0; left: 0; z-index: 9500;
-  pointer-events: none; mix-blend-mode: difference;
+  pointer-events: none;
+  --cur-line: #ffffff;
+  filter: drop-shadow(0 0 1px rgba(6, 8, 12, .7)) drop-shadow(0 0 3px rgba(6, 8, 12, .38));
+}
+html.has-cursor[data-tone="light"] .cur {
+  --cur-line: #14130f;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, .8));
 }
 html.has-cursor, html.has-cursor * { cursor: none !important; }
+/* belt and braces: never show the reticle on touch devices */
+@media (hover: none), (pointer: coarse) {
+  .cur { display: none !important; }
+  html.has-cursor, html.has-cursor * { cursor: auto !important; }
+}
+
 .cur__dot {
   position: absolute; top: 0; left: 0;
-  width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
-  border-radius: 50%; background: #fff;
-}
-.cur__ring {
-  position: absolute; top: 0; left: 0;
-  width: 40px; height: 40px; margin: -20px 0 0 -20px;
-  border: 1px solid rgba(255,255,255,.85);
+  width: 4px; height: 4px; margin: -2px 0 0 -2px;
   border-radius: 50%;
-  display: grid; place-items: center;
-  transition: width .45s var(--ease), height .45s var(--ease),
-              margin .45s var(--ease), border-radius .45s var(--ease),
-              background-color .45s var(--ease), border-color .45s var(--ease);
+  background: var(--cur-line);
+  transition: width .3s var(--ease), height .3s var(--ease),
+              margin .3s var(--ease), background-color .3s ease, opacity .3s ease;
 }
+.cur__frame {
+  position: absolute; top: 0; left: 0;
+  width: 28px; height: 28px; margin: -14px 0 0 -14px;
+  transition: width .45s var(--ease), height .45s var(--ease), margin .45s var(--ease);
+}
+.cur__c {
+  position: absolute; width: 6px; height: 6px;
+  border: 0 solid var(--cur-line);
+  transition: border-color .3s ease, width .45s var(--ease), height .45s var(--ease);
+}
+.cur__c--tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.cur__c--tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.cur__c--bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.cur__c--br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
 .cur__label {
-  font-family: var(--f-mono); font-size: 8px; letter-spacing: .16em;
-  text-transform: uppercase; color: #fff;
-  opacity: 0; transition: opacity .3s ease;
+  position: absolute; left: 50%; top: 100%;
+  transform: translateX(-50%);
+  margin-top: 9px;
+  font-family: var(--f-mono); font-size: 8px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--cur-line);
+  white-space: nowrap;
+  opacity: 0; transition: opacity .28s ease;
 }
-html[data-cur="link"] .cur__ring  { width: 66px; height: 66px; margin: -33px 0 0 -33px; border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.09); }
-html[data-cur="media"] .cur__ring { width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 0; }
-html[data-cur="drag"] .cur__ring  { width: 108px; height: 108px; margin: -54px 0 0 -54px; border-style: dashed; }
-html[data-cur="link"] .cur__label,
-html[data-cur="media"] .cur__label,
-html[data-cur="drag"] .cur__label { opacity: 1; }
+
+/* lock — over anything clickable the reticle tightens and picks up the gold */
+html[data-cur="link"] .cur__frame { width: 17px; height: 17px; margin: -8.5px 0 0 -8.5px; }
+html[data-cur="link"] .cur__c { width: 5px; height: 5px; border-color: var(--gold); }
+html[data-cur="link"] .cur__dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; background: var(--gold); }
+
+/* frame — over a photograph the reticle opens up like a viewfinder */
+html[data-cur="media"] .cur__frame { width: 86px; height: 86px; margin: -43px 0 0 -43px; }
+html[data-cur="media"] .cur__c { width: 14px; height: 14px; border-color: var(--gold); }
+html[data-cur="media"] .cur__dot { opacity: 0; }
+html[data-cur="media"] .cur__label { opacity: 1; }
 
 /* exposure rail */
 .rail {
@@ -290,6 +331,23 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
   -webkit-backdrop-filter: blur(14px) saturate(1.3);
   border-bottom: 1px solid rgba(244,241,234,.08);
 }
+
+/* over the paper sections the bar has to become paper too, otherwise it cuts
+   a hard black band across the "print" */
+html[data-navtone="light"] .nav.is-solid {
+  background: rgba(239, 236, 228, .88);
+  border-bottom-color: rgba(20, 19, 15, .1);
+}
+html[data-navtone="light"] .mark__word,
+html[data-navtone="light"] .nav__link { color: var(--coal); }
+html[data-navtone="light"] .mark__iris { filter: invert(1); }
+html[data-navtone="light"] .nav__link.is-active { color: #8a6a34; }
+html[data-navtone="light"] .lang__btn { color: rgba(20, 19, 15, .48); }
+html[data-navtone="light"] .lang__btn:hover { color: var(--coal); }
+html[data-navtone="light"] .lang__btn.is-active { color: #8a6a34; }
+html[data-navtone="light"] .btn--pill { color: var(--coal); border-color: rgba(20, 19, 15, .22); }
+html[data-navtone="light"] .btn--pill:hover { color: #8a6a34; border-color: #8a6a34; }
+html[data-navtone="light"] .nav__toggle span { background: var(--coal); }
 .mark { display: inline-flex; align-items: center; gap: .7rem; }
 .mark__iris {
   width: 24px; height: 24px;
@@ -466,8 +524,9 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
 .hero__title {
   font-family: var(--f-disp); font-weight: 400;
   font-size: var(--t-hero);
-  line-height: .84; letter-spacing: -.035em;
+  line-height: .87; letter-spacing: -.022em;
   color: #f7f4ee;
+  text-shadow: 0 2px 34px rgba(4, 7, 11, .3);
 }
 .hero__cjk {
   font-family: var(--f-cjk);
@@ -527,13 +586,18 @@ html[data-cur="drag"] .cur__label { opacity: 1; }
   position: relative;              /* offsetParent for the per-line lighting */
   font-family: var(--f-disp);
   font-size: var(--t-disp);
-  line-height: 1.28; letter-spacing: -.014em;
-  margin: clamp(2rem, 4.5vh, 3.4rem) 0 clamp(2.2rem, 4.5vh, 3.4rem);
+  line-height: 1.2; letter-spacing: 0;
+  margin: clamp(1.8rem, 4vh, 3rem) 0 clamp(2rem, 4vh, 3rem);
   color: var(--fg);
-  max-width: 24ch;
+  /* generous enough to hold 11 Japanese characters on one line; the real
+     measure is capped by .mf__inner, and the line breaks are explicit anyway */
+  max-width: 12em;
 }
 .mf__text span { opacity: .16; transition: opacity .32s linear; }
 .mf__text span.is-lit { opacity: 1; }
+/* Japanese sets fewer characters per em than Chinese, so the same size would
+   wrap the first line twice over. Optical size, not a fixed size. */
+html[lang="ja"] .mf__text { font-size: clamp(2.4rem, 7vw, 6.4rem); }
 .mf__sign {
   display: flex; align-items: baseline; justify-content: space-between; gap: 2rem;
   padding-top: 1.4rem; border-top: 1px solid var(--hair);

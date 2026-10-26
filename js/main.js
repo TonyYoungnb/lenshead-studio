@@ -27,7 +27,7 @@
       hero_sub: "东京摄影工作室。我们拍摄的不是主体，而是落在主体上的光。",
       hero_scroll: "向下滚动",
       mf_label: "宣言",
-      mf_text: "照片记录的不是那里有什么，而是那里的光。以及光愿意停留的那一瞬间。",
+      mf_text: "光不只是照亮。\n它定义主体。",
       mf_note: "东京 · 自 2018 年",
       wk_label: "精选作品",
       wk_cat1: "静物 · 商业", wk_cat2: "时尚 · 编辑", wk_cat3: "人像 · 自然光",
@@ -82,7 +82,7 @@
       hero_sub: "東京のフォトスタジオ。私たちが撮るのは被写体ではなく、被写体に落ちる光です。",
       hero_scroll: "スクロール",
       mf_label: "マニフェスト",
-      mf_text: "写真が記録するのは、そこに何があるかではない。そこにあった光と、光がとどまることを許した一瞬だ。",
+      mf_text: "光は照らすだけでなく、\n被写体を定義する。",
       mf_note: "東京 · 2018 年より",
       wk_label: "厳選作品",
       wk_cat1: "静物・商業", wk_cat2: "ファッション・エディトリアル", wk_cat3: "ポートレート・自然光",
@@ -137,7 +137,7 @@
       hero_sub: "A Tokyo photography studio. We don't photograph subjects — we photograph the light that falls on them.",
       hero_scroll: "Scroll",
       mf_label: "Manifesto",
-      mf_text: "A photograph does not record what was there. It records the light that was there — and the instant it agreed to stay still.",
+      mf_text: "Light doesn't\nreveal a subject.\nIt defines it.",
       mf_note: "Tokyo · since 2018",
       wk_label: "Selected works",
       wk_cat1: "Still life · Commercial", wk_cat2: "Fashion · Editorial", wk_cat3: "Portrait · Available light",
@@ -213,7 +213,13 @@
     mfSpans = [];
     parts.forEach(function (p) {
       if (!p) return;
-      if (/^\s+$/.test(p)) { el.appendChild(document.createTextNode(" ")); return; }
+      if (/^\s+$/.test(p)) {
+        /* an explicit \n in the copy buys a real line break, so each line of
+           the manifesto can be a complete thought */
+        if (p.indexOf("\n") > -1) el.appendChild(document.createElement("br"));
+        else el.appendChild(document.createTextNode(" "));
+        return;
+      }
       var s = document.createElement("span");
       s.textContent = p;
       el.appendChild(s);
@@ -355,16 +361,19 @@
      3. custom cursor
      ====================================================================== */
   var cur = $("#cur");
-  var curRing = cur && cur.querySelector(".cur__ring");
+  var curFrame = cur && cur.querySelector(".cur__frame");
   var curDot = cur && cur.querySelector(".cur__dot");
   var curLabel = cur && cur.querySelector(".cur__label");
   var mx = -100, my = -100, rx = -100, ry = -100, curOn = false;
 
   if (cur && FINE && !REDUCED) {
     html.classList.add("has-cursor");
+    html.setAttribute("data-tone", "dark");
     curOn = true;
     window.addEventListener("mousemove", function (e) {
       mx = e.clientX; my = e.clientY;
+      /* the dot is dead-on the pointer so aiming stays exact; the brackets
+         trail a frame behind, which is what makes it feel like AF hunting */
       if (curDot) curDot.style.transform = "translate3d(" + mx + "px," + my + "px,0)";
     }, { passive: true });
 
@@ -375,7 +384,7 @@
         mode = el.getAttribute("data-cursor") || "";
         if (el.tagName === "A" || el.tagName === "BUTTON") mode = mode || "link";
         if (el.classList.contains("wk")) { mode = "media"; label = "view"; }
-        if (mode === "scroll") label = "scroll";
+        if (mode === "scroll") { mode = "link"; label = ""; }
       }
       html.setAttribute("data-cur", mode);
       if (curLabel) curLabel.textContent = label;
@@ -468,6 +477,7 @@
     /* manifesto lighting */
     updateManifesto();
     updateNav();
+    updateTone();
 
     /* pinned works */
     if (pinned && works && worksDist > 0 && track) {
@@ -498,10 +508,10 @@
 
   function loop() {
     onScroll();
-    if (curOn && curRing) {
-      rx = lerp(rx, mx, 0.16);
-      ry = lerp(ry, my, 0.16);
-      curRing.style.transform = "translate3d(" + rx.toFixed(2) + "px," + ry.toFixed(2) + "px,0)";
+    if (curOn && curFrame) {
+      rx = lerp(rx, mx, 0.19);
+      ry = lerp(ry, my, 0.19);
+      curFrame.style.transform = "translate3d(" + rx.toFixed(2) + "px," + ry.toFixed(2) + "px,0)";
     }
     requestAnimationFrame(loop);
   }
@@ -540,6 +550,27 @@
   }).filter(function (o) { return o.el && o.link; });
 
   var activeNav = "";
+
+  /* the two paper sections — the reticle flips to ink over them, and so does
+     the nav bar. They are judged at different heights: the reticle follows the
+     viewport centre, the bar follows its own position at the top edge. */
+  var lightSecs = $$(".mf, .fd");
+  var curTone = "", navTone = "";
+
+  function updateTone() {
+    if (!lightSecs.length) return;
+    var lightAt = function (y) {
+      for (var i = 0; i < lightSecs.length; i++) {
+        var r = lightSecs[i].getBoundingClientRect();
+        if (r.top <= y && r.bottom > y) return true;
+      }
+      return false;
+    };
+    var t = lightAt(window.innerHeight * 0.5) ? "light" : "dark";
+    if (t !== curTone) { curTone = t; html.setAttribute("data-tone", t); }
+    var n = lightAt(40) ? "light" : "dark";
+    if (n !== navTone) { navTone = n; html.setAttribute("data-navtone", n); }
+  }
 
   function updateNav() {
     if (!navSections.length) return;
